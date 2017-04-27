@@ -12,9 +12,22 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateVM.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateVMFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\IDateVM.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\IUserTaskChanged.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\MVVMBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\UserTasks\UserTask.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\UserTasks\UserTaskMediator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\UserTasks\UserTaskUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ApplicationModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ApplicationVM.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DayVM.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\HourVM.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MonthVM.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\WeekVM.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\YearVM.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\ApplicationView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -24,9 +37,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Infrastrucure\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\ApplicationView.xaml">

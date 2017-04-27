@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Akvelon.Calendar.Models
+﻿namespace Akvelon.Calendar.Models
 {
     public class ApplicationModel
     {

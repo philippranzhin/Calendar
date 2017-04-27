@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Akvelon.Calendar.ViewModels
+namespace Akvelon.Calendar.Infrastrucure
 {
-    public class ViewModelBase:INotifyPropertyChanged
+    public abstract class MVVMBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
