@@ -10,21 +10,20 @@ namespace Akvelon.Calendar.ViewModels
     {
         #region fields
         private ApplicationModel _model;
-        private ObservableCollection<DateVM> _dateViewModels;
-        private DateVM _currentDateVM;
         private readonly UserTaskMediator _taskMedidator;
+        private DateCaseVM _currentDateCase;
+        private ObservableCollection<DateCaseVM> _dateCases=new ObservableCollection<DateCaseVM>();
         #endregion
 
         #region constructors
-        public ApplicationVM()
+        public ApplicationVM(ApplicationModel model, Enums.DateInfoType dateType = Enums.DateInfoType.Year)
         {
-            DateInfo currentDate = new DateInfo(DateTime.Now, DateInfoType.Year);
-            CurrentDateVM = DateVMFactory.Create(currentDate, _taskMedidator.UserTasks);
-        }
-
-        public ApplicationVM(ApplicationModel model)
-        {
+            _taskMedidator=new UserTaskMediator();
             _model = model;
+            DateInfo currentDate = new DateInfo(DateTime.Now, dateType);
+                   
+           AddDateCase(new DateCaseVM(currentDate,_taskMedidator));
+
         }
         #endregion
 
@@ -49,32 +48,40 @@ namespace Akvelon.Calendar.ViewModels
             }
         }
 
-        public ObservableCollection<DateVM> DateViewModels
+        public DateCaseVM CurrentDateCase
         {
-            get { return _dateViewModels; }
-            private set
+            get
             {
-                _dateViewModels = value;
-                OnPropertyChanged("DateViewModels");
+                return _currentDateCase;                 
+            }
+            set
+            {
+                _currentDateCase = value;
+                OnPropertyChanged();
             }
         }
 
-        public DateVM CurrentDateVM
+        public ObservableCollection<DateCaseVM> DateCases
         {
-            get { return _currentDateVM; }
-            set
+            get { return _dateCases; }
+            private set
             {
-                _currentDateVM = value;
-                OnPropertyChanged("CurrentDateVM");
-
-                if(!DateViewModels.Contains(_currentDateVM))
-                    DateViewModels.Add(_currentDateVM);
+                _dateCases = value;
+                OnPropertyChanged();
             }
         }
         #endregion
 
         #region methods
-
+        private void AddDateCase(DateCaseVM dateCase)
+        {
+            DateCases.Add(dateCase);
+            dateCase.NewVMNeeded += (sender, args) =>
+            {
+                AddDateCase(new DateCaseVM(args,_taskMedidator));
+            };
+            CurrentDateCase = dateCase;
+        }
         #endregion
     }
 }

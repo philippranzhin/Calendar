@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Akvelon.Calendar.Infrastrucure.UserTasks;
+using Xamarin.Forms;
 
 namespace Akvelon.Calendar.Infrastrucure
 {
@@ -23,6 +24,8 @@ namespace Akvelon.Calendar.Infrastrucure
 
         #region properties
         protected  abstract ReadOnlyObservableCollection<UserTask> Tasks { get; }
+        
+        public DateInfo Date => _date;
         #endregion
 
         #region methods
@@ -36,9 +39,30 @@ namespace Akvelon.Calendar.Infrastrucure
             NewVMNeeded?.Invoke(this,newDate);
         }
 
+        public abstract DateVM GetNext();
+
+        public abstract DateVM GetPrevious();
+
         public void UpdateTasks()
         {
          OnPropertyChanged("Tasks");
+        }
+        #endregion
+
+        #region commands
+
+        public Command NextViewCommand
+        {
+            get
+            {
+                return new Command((dateInfo) =>
+                {
+                    if (!(dateInfo is DateInfo))
+                        return;
+
+                    OnNewWMNeeded((DateInfo)dateInfo);
+                });
+            }
         }
         #endregion
 

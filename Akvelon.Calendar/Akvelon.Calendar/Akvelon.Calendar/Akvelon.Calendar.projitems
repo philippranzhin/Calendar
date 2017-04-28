@@ -16,6 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateTimeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateVM.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateVMFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\Enums.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\IDateVM.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\IUserTaskChanged.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\MVVMBase.cs" />
@@ -24,8 +25,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\UserTasks\UserTaskUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ApplicationModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ApplicationVM.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DateCaseVM.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DayVM.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\HourVM.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MonthVM.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\WeekVM.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\YearVM.cs" />

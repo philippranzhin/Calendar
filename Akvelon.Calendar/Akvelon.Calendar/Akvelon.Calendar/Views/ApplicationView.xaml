@@ -1,17 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Akvelon.Calendar.Views.ApplicationView">
-
-    <StackLayout HorizontalOptions="FillAndExpand"
-                 VerticalOptions="FillAndExpand">
-
-        <Label Text="{Binding Name}"
-               Margin="5"
-               FontAttributes="Bold"
-               HorizontalOptions="Center"
-               FontSize="18">
-        </Label> 
-        
-    </StackLayout>    
-</ContentPage>
+             x:Class="Akvelon.Calendar.Views.ApplicationView"
+             ItemsSource="{Binding CurrentDateCase.DateVMCollection}"
+             SelectedItem="{Binding CurrentDateCase.CurrentDateVM, Mode=TwoWay}"
+            >
+    <!--TODO-->
+    <CarouselPage.ItemTemplate>
+       <DataTemplate>
+           <ContentPage>
+                <Label Text="{Binding Date.Date}"
+                            HorizontalOptions="CenterAndExpand"
+                            VerticalOptions="CenterAndExpand">
+                </Label>
+            </ContentPage>
+       </DataTemplate>
+   </CarouselPage.ItemTemplate>
+</CarouselPage>

@@ -10,19 +10,19 @@ namespace Akvelon.Calendar.Infrastrucure
         {
             switch (dateInfo.DateType)
             {
-                case DateInfoType.Year:
+                case Enums.DateInfoType.Year:
                 {
                     return new YearVM(dateInfo, tasks);
                 }
-                case DateInfoType.Month:
+                case Enums.DateInfoType.Month:
                 {
-                    return new YearVM(dateInfo, tasks);
+                    return new MonthVM(dateInfo, tasks);
                 }
-                case DateInfoType.Week:
+                case Enums.DateInfoType.Week:
                 {
                     return new WeekVM(dateInfo, tasks);
                 }
-                case DateInfoType.Day:
+                case Enums.DateInfoType.Day:
                 {
                     return new DayVM(dateInfo, tasks);
                 }

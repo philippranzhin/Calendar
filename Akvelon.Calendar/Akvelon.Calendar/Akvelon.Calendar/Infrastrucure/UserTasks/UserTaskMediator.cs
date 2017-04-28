@@ -37,12 +37,12 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
 
         public void AddClient(IUserTaskChanged client)
         {
+            if(_taskClients==null)
+                _taskClients=new ObservableCollection<IUserTaskChanged>();
+
             if (_taskClients.Contains(client))
                 return;
 
-            if (_taskClients==null)
-                _taskClients=new ObservableCollection<IUserTaskChanged>();
-                   
             _taskClients.Add(client);
 
             client.TaskAdded += AddMethod;
@@ -61,12 +61,14 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
         }
         #endregion
 
-        #region properties
-        //public UserTaskUtil TaskUtil => _userTaskUtil;
+        #region properties   
         public ReadOnlyObservableCollection<UserTask> UserTasks
         {
             get
             {
+                if (_userTaskUtil.Tasks == null)
+                    return null;
+
                 _userTasks=new ReadOnlyObservableCollection<UserTask>(_userTaskUtil.Tasks);
                 return _userTasks;                
             }

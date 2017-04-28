@@ -7,10 +7,13 @@ namespace Akvelon.Calendar.ViewModels
 {
     class MonthVM : DateVM
     {
-        public MonthVM(DateInfo dateInfo, ReadOnlyObservableCollection<UserTask> _tasks) : base(dateInfo, _tasks)
+        #region constructors
+        public MonthVM(DateInfo dateInfo, ReadOnlyObservableCollection<UserTask> tasks) : base(dateInfo, tasks)
         {
         }
+        #endregion
 
+        #region properties
         protected override ReadOnlyObservableCollection<UserTask> Tasks
         {
             get
@@ -22,5 +25,18 @@ namespace Akvelon.Calendar.ViewModels
                 return new ReadOnlyObservableCollection<UserTask>(result);
             }
         }
+        #endregion
+
+        #region methods
+        public override DateVM GetNext()
+        {
+            return new MonthVM(new DateInfo(_date.Date.AddMonths(1), Enums.DateInfoType.Month), _tasks);
+        }
+
+        public override DateVM GetPrevious()
+        {
+            return new MonthVM(new DateInfo(_date.Date.AddMonths(-1), Enums.DateInfoType.Month), _tasks);
+        }
+        #endregion        
     }
 }

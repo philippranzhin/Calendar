@@ -7,10 +7,13 @@ namespace Akvelon.Calendar.ViewModels
 {
     public class YearVM : DateVM
     {
-        public YearVM(DateInfo dateInfo, ReadOnlyObservableCollection<UserTask> _tasks) : base(dateInfo, _tasks)
+        #region constructors
+        public YearVM(DateInfo dateInfo, ReadOnlyObservableCollection<UserTask> tasks) : base(dateInfo, tasks)
         {
         }
+        #endregion
 
+        #region properties
         protected override ReadOnlyObservableCollection<UserTask> Tasks
         {
             get
@@ -18,9 +21,22 @@ namespace Akvelon.Calendar.ViewModels
                 ObservableCollection<UserTask> result = new ObservableCollection<UserTask>(_tasks.Where(task =>
                     task.TaskDate.Year == _date.Date.Year &&
                     task.TaskDate.Month == _date.Date.Month));
-                
+
                 return new ReadOnlyObservableCollection<UserTask>(result);
             }
         }
+        #endregion
+
+        #region methods
+        public override DateVM GetNext()
+        {
+            return new YearVM(new DateInfo(_date.Date.AddYears(+1), Enums.DateInfoType.Year), _tasks);
+        }
+
+        public override DateVM GetPrevious()
+        {
+            return new YearVM(new DateInfo(_date.Date.AddYears(-1), Enums.DateInfoType.Year), _tasks);
+        }
+        #endregion
     }
 }
