@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using Akvelon.Calendar.Infrastrucure;
 using Akvelon.Calendar.Infrastrucure.UserTasks;
 
@@ -10,15 +7,19 @@ namespace Akvelon.Calendar.ViewModels
 {
     class MonthVM : DateVM
     {
-        public MonthVM(DateInfo dateInfo, ObservableCollection<UserTask> _tasks) : base(dateInfo, _tasks)
+        public MonthVM(DateInfo dateInfo, ReadOnlyObservableCollection<UserTask> _tasks) : base(dateInfo, _tasks)
         {
         }
 
-        protected override ObservableCollection<UserTask> Tasks
+        protected override ReadOnlyObservableCollection<UserTask> Tasks
         {
             get
             {
-                return new ObservableCollection<UserTask>(_tasks.Where(task => task.TaskDate.Year == _date.Date.Year && task.TaskDate.Month== _date.Date.Month));
+                ObservableCollection<UserTask> result = new ObservableCollection<UserTask>(_tasks.Where(task =>
+                    task.TaskDate.Year == _date.Date.Year &&
+                    task.TaskDate.Month == _date.Date.Month));
+
+                return new ReadOnlyObservableCollection<UserTask>(result);
             }
         }
     }

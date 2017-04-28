@@ -13,6 +13,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateTimeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateVM.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateVMFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\IDateVM.cs" />

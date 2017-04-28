@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Akvelon.Calendar.Infrastrucure.UserTasks;
@@ -11,11 +9,11 @@ namespace Akvelon.Calendar.Infrastrucure
     {
         #region fields
         protected readonly DateInfo _date;
-        protected readonly ObservableCollection<UserTask> _tasks;
+        protected readonly ReadOnlyObservableCollection<UserTask> _tasks;
         #endregion
 
         #region constructors        
-        protected DateVM(DateInfo dateInfo, ObservableCollection<UserTask> tasks)
+        protected DateVM(DateInfo dateInfo, ReadOnlyObservableCollection<UserTask> tasks)
         {
             _date = dateInfo;
             _tasks = tasks;
@@ -24,7 +22,7 @@ namespace Akvelon.Calendar.Infrastrucure
         #endregion
 
         #region properties
-        protected  abstract ObservableCollection<UserTask> Tasks { get; }
+        protected  abstract ReadOnlyObservableCollection<UserTask> Tasks { get; }
         #endregion
 
         #region methods

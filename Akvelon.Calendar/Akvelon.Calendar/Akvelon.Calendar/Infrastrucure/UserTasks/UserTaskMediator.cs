@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace Akvelon.Calendar.Infrastrucure.UserTasks
 {
@@ -12,6 +11,7 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
         #region fields
         private ObservableCollection<IUserTaskChanged> _taskClients;
         private readonly UserTaskUtil _userTaskUtil;
+        private ReadOnlyObservableCollection<UserTask> _userTasks;
         #endregion
 
         #region constructor
@@ -62,7 +62,15 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
         #endregion
 
         #region properties
-        public UserTaskUtil TaskUtil => _userTaskUtil;
+        //public UserTaskUtil TaskUtil => _userTaskUtil;
+        public ReadOnlyObservableCollection<UserTask> UserTasks
+        {
+            get
+            {
+                _userTasks=new ReadOnlyObservableCollection<UserTask>(_userTaskUtil.Tasks);
+                return _userTasks;                
+            }
+        }
         #endregion
     }
 }

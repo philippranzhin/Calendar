@@ -19,7 +19,7 @@ namespace Akvelon.Calendar.ViewModels
         public ApplicationVM()
         {
             DateInfo currentDate = new DateInfo(DateTime.Now, DateInfoType.Year);
-            CurrentDateVM = DateVMFactory.Create(currentDate, _taskMedidator.TaskUtil.Tasks);
+            CurrentDateVM = DateVMFactory.Create(currentDate, _taskMedidator.UserTasks);
         }
 
         public ApplicationVM(ApplicationModel model)

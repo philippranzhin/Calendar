@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 using Akvelon.Calendar.Infrastrucure.UserTasks;
 using Akvelon.Calendar.ViewModels;
 
@@ -9,7 +6,7 @@ namespace Akvelon.Calendar.Infrastrucure
 {
     public class DateVMFactory
     {
-        public static DateVM Create(DateInfo dateInfo, ObservableCollection<UserTask> tasks)
+        public static DateVM Create(DateInfo dateInfo, ReadOnlyObservableCollection<UserTask> tasks)
         {
             switch (dateInfo.DateType)
             {
