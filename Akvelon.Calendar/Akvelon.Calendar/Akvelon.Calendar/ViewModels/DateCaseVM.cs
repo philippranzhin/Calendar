@@ -8,23 +8,20 @@ namespace Akvelon.Calendar.ViewModels
     public class DateCaseVM:MVVMBase
     {
         #region fields
-        private const uint OLD_DATES_COUNT = 50;
+        private const uint OLD_DATES_COUNT = 10;
         private DateVM _currentDateVM;
         private readonly UserTaskMediator _taskMedidator;
         private ObservableCollection<DateVM> _dateVMCollection;
         #endregion
 
         #region constructors
-        public DateCaseVM(DateInfo currentDate, UserTaskMediator _userTaskMediator)
+        public DateCaseVM(DateVM currentDateVM, UserTaskMediator userTaskMediator)
         {
-            _taskMedidator = _userTaskMediator;
-            CurrentDateVM = DateVMFactory.Create(currentDate, _taskMedidator.UserTasks);
+            _taskMedidator = userTaskMediator;
+            CurrentDateVM = currentDateVM;
             _dateVMCollection = new ObservableCollection<DateVM>();
 
-            AddDateVM(CurrentDateVM.GetPrevious());
-            AddDateVM(CurrentDateVM);
-            AddDateVM(CurrentDateVM.GetNext());
-
+            SetCurrentVM();
             GenerateDates();
         }
         #endregion
@@ -39,7 +36,7 @@ namespace Akvelon.Calendar.ViewModels
                 OnPropertyChanged("CurrentDateVM");
 
                 if (DateVMCollection != null && DateVMCollection.Last() == CurrentDateVM)
-                    DateVMCollection.Add(DateVMCollection.Last().GetNext());
+                    AddDateVM(DateVMCollection.Last().GetNext());
 
                 if (DateVMCollection != null && DateVMCollection.First() == CurrentDateVM)
                 {
@@ -78,9 +75,16 @@ namespace Akvelon.Calendar.ViewModels
             dateVM.NewVMNeeded -= OnNewWMNeeded;
         }
 
-        protected virtual void OnNewWMNeeded(IDateVM sender,DateInfo newDate)
+        protected virtual void OnNewWMNeeded(IDateVM sender, DateVM newDateVM)
         {
-            NewVMNeeded?.Invoke(sender, newDate);
+            NewVMNeeded?.Invoke(sender, newDateVM);        
+        }
+
+        private void SetCurrentVM()
+        {
+            AddDateVM(CurrentDateVM.GetPrevious());
+            AddDateVM(CurrentDateVM);
+            AddDateVM(CurrentDateVM.GetNext());
         }
         #endregion
 

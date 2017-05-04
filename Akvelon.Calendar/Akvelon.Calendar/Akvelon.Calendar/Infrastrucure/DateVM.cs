@@ -1,7 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Akvelon.Calendar.Infrastrucure.UserTasks;
+using Akvelon.Calendar.Models;
 using Xamarin.Forms;
 
 namespace Akvelon.Calendar.Infrastrucure
@@ -9,23 +10,33 @@ namespace Akvelon.Calendar.Infrastrucure
     public abstract class DateVM : IDateVM
     {
         #region fields
-        protected readonly DateInfo _date;
-        protected readonly ReadOnlyObservableCollection<UserTask> _tasks;
+        protected readonly DateVMUtil _dateVmUtil;
+        protected readonly DateInfoModel _date;
+        protected readonly ReadOnlyObservableCollection<UserTaskModel> _tasks;
         #endregion
 
         #region constructors        
-        protected DateVM(DateInfo dateInfo, ReadOnlyObservableCollection<UserTask> tasks)
+        protected DateVM(DateInfoModel dateInfo, DateVMUtil dateVmUtil, ReadOnlyObservableCollection<UserTaskModel> tasks)
         {
             _date = dateInfo;
             _tasks = tasks;
+            _dateVmUtil = dateVmUtil;
             UpdateTasks();
         }
         #endregion
 
         #region properties
-        protected  abstract ReadOnlyObservableCollection<UserTask> Tasks { get; }
+        public  abstract ReadOnlyObservableCollection<UserTaskModel> Tasks { get; }
         
-        public DateInfo Date => _date;
+        public DateInfoModel Date => _date;
+
+        public bool IsCurrentDate=>Date.Compare(DateTime.Now);
+
+        public abstract string Name { get;}
+
+        protected abstract DateInfoModel NextDate { get; }
+
+        protected abstract DateInfoModel PreviousDate { get; }
         #endregion
 
         #region methods
@@ -34,33 +45,56 @@ namespace Akvelon.Calendar.Infrastrucure
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected virtual void OnNewWMNeeded(DateInfo newDate)
+        protected virtual void OnNewWMNeeded(IDateVM sender,DateVM newDateVM)
         {
-            NewVMNeeded?.Invoke(this,newDate);
+            NewVMNeeded?.Invoke(sender, newDateVM);
         }
 
-        public abstract DateVM GetNext();
+        protected virtual void OnTaskAdded(IUserTaskChanged sender, UserTaskModel task)
+        {
+            TaskAdded?.Invoke(sender,task);
+        }
 
-        public abstract DateVM GetPrevious();
+        protected virtual void OnTaskRemoved(IUserTaskChanged sender, UserTaskModel task)
+        {
+            TaskRemoved?.Invoke(sender, task);
+        }
 
-        public void UpdateTasks()
+        public virtual DateVM GetNext()
+        {
+            return _dateVmUtil.GetOrCreate(NextDate);
+        }
+
+        public virtual DateVM GetPrevious()
+        {
+            return _dateVmUtil.GetOrCreate(PreviousDate);
+        }
+
+        public virtual void UpdateTasks()
         {
          OnPropertyChanged("Tasks");
         }
         #endregion
 
         #region commands
-
         public Command NextViewCommand
         {
             get
             {
-                return new Command((dateInfo) =>
-                {
-                    if (!(dateInfo is DateInfo))
-                        return;
+                return new Command((sender) =>
+                {                
+                    OnNewWMNeeded(this,sender as DateVM);
+                });
+            }
+        }
 
-                    OnNewWMNeeded((DateInfo)dateInfo);
+        public Command AddTaskCommand
+        {
+            get
+            {
+                return new Command(() =>
+                {
+                    TaskAdded?.Invoke(this, new UserTaskModel(Date.Date));
                 });
             }
         }

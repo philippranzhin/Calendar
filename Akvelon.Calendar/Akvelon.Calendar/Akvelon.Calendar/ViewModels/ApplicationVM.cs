@@ -16,14 +16,13 @@ namespace Akvelon.Calendar.ViewModels
         #endregion
 
         #region constructors
-        public ApplicationVM(ApplicationModel model, Enums.DateInfoType dateType = Enums.DateInfoType.Year)
+        public ApplicationVM(ApplicationModel model, DateInfoType dateType = DateInfoType.Year)
         {
-            _taskMedidator=new UserTaskMediator();
+            _taskMedidator = new UserTaskMediator();
             _model = model;
-            DateInfo currentDate = new DateInfo(DateTime.Now, dateType);
-                   
-           AddDateCase(new DateCaseVM(currentDate,_taskMedidator));
-
+            DateVMUtil util=new DateVMUtil(_taskMedidator.UserTasks);
+            DateInfoModel currentDate = new DateInfoModel(DateTime.Now, dateType);            
+            AddDateCase(new DateCaseVM(util.GetOrCreate(currentDate), _taskMedidator));
         }
         #endregion
 
@@ -58,6 +57,7 @@ namespace Akvelon.Calendar.ViewModels
             {
                 _currentDateCase = value;
                 OnPropertyChanged();
+                OnPropertyChanged("DateCasesX");
             }
         }
 
@@ -76,9 +76,11 @@ namespace Akvelon.Calendar.ViewModels
         private void AddDateCase(DateCaseVM dateCase)
         {
             DateCases.Add(dateCase);
-            dateCase.NewVMNeeded += (sender, args) =>
+
+            dateCase.NewVMNeeded += (sender, newVM) =>
             {
-                AddDateCase(new DateCaseVM(args,_taskMedidator));
+                if (CurrentDateCase == dateCase)
+                    AddDateCase(new DateCaseVM(newVM, _taskMedidator));
             };
             CurrentDateCase = dateCase;
         }

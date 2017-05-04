@@ -1,43 +1,51 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using Akvelon.Calendar.Infrastrucure;
-using Akvelon.Calendar.Infrastrucure.UserTasks;
+using Akvelon.Calendar.Models;
 
 namespace Akvelon.Calendar.ViewModels
 {
-    class DayVM:DateVM
-    {                
+    public class DayVM:DateWithChildrenVM
+    {
         #region constructors
-        public DayVM(DateInfo dateInfo, ReadOnlyObservableCollection<UserTask> tasks) : base(dateInfo, tasks)
+        public DayVM(DateInfoModel dateInfo, DateVMUtil dateVmUtil, ReadOnlyObservableCollection<UserTaskModel> tasks) : base(dateInfo, dateVmUtil, tasks)
         {
         }
         #endregion
 
         #region properties
-        protected override ReadOnlyObservableCollection<UserTask> Tasks
+        public override ReadOnlyObservableCollection<UserTaskModel> Tasks
         {
             get
             {
-                ObservableCollection<UserTask> result = new ObservableCollection<UserTask>(_tasks.Where(task =>
+                ObservableCollection<UserTaskModel> result = new ObservableCollection<UserTaskModel>(_tasks.Where(task =>
                     task.TaskDate.Year == _date.Date.Year &&
                     task.TaskDate.Month == _date.Date.Month &&
                     task.TaskDate.Day == _date.Date.Day));
 
-                return new ReadOnlyObservableCollection<UserTask>(result);
+                return new ReadOnlyObservableCollection<UserTaskModel>(result);
             }
         }
+
+        public override string Name => Date.Date.ToString("dddd MMM yy", CultureInfo.CurrentCulture);
+
+        protected override DateInfoModel NextDate => new DateInfoModel(_date.Date.AddDays(+1), DateInfoType.Day);
+
+        protected override DateInfoModel PreviousDate => new DateInfoModel(_date.Date.AddDays(-1), DateInfoType.Day);
         #endregion
 
         #region methods
-        public override DateVM GetNext()
+        protected override void ChidrenFilling()
         {
-            return new DayVM(new DateInfo(_date.Date.AddDays(1), Enums.DateInfoType.Day), _tasks);
+            DateTime currentDate = new DateTime(Date.Date.Year,Date.Date.Month,Date.Date.Day,1,0,0);
+            for (int i = 1; i <= DateTimeExtensions.HOURS_IN_DAY; i++)
+            {
+                RegisterChild(new DateInfoModel(currentDate,DateInfoType.Hour));
+                currentDate=currentDate.AddHours(1);
+            }
         }
-
-        public override DateVM GetPrevious()
-        {
-            return new DayVM(new DateInfo(_date.Date.AddDays(-1), Enums.DateInfoType.Day), _tasks);
-        }
-        #endregion        
+        #endregion
     }
 }

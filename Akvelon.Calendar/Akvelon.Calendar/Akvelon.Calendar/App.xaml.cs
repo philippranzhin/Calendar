@@ -14,7 +14,6 @@ namespace Akvelon.Calendar
             ApplicationModel model=new ApplicationModel() {Name = "Calendar"};
             ApplicationVM viewModel=new ApplicationVM(model);
 		    ApplicationView view = new ApplicationView();
-
 		    view.BindingContext = viewModel;
 
             MainPage = view;

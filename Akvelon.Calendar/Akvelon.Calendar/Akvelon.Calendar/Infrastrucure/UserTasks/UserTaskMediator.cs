@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Akvelon.Calendar.Models;
 
 namespace Akvelon.Calendar.Infrastrucure.UserTasks
 {
@@ -11,7 +12,7 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
         #region fields
         private ObservableCollection<IUserTaskChanged> _taskClients;
         private readonly UserTaskUtil _userTaskUtil;
-        private ReadOnlyObservableCollection<UserTask> _userTasks;
+        private ReadOnlyObservableCollection<UserTaskModel> _userTasks;
         #endregion
 
         #region constructor
@@ -23,15 +24,19 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
         #endregion
 
         #region methods
-        private void AddMethod(IUserTaskChanged sender, UserTask task)
+        private void AddMethod(IUserTaskChanged sender, UserTaskModel task)
         {
-            _userTaskUtil.Tasks.Add(task);
+            if(!_userTaskUtil.Tasks.Contains(task))
+                _userTaskUtil.Tasks.Add(task);
+
             sender.UpdateTasks();
         }
 
-        private void RemoveMethod(IUserTaskChanged sender, UserTask task)
+        private void RemoveMethod(IUserTaskChanged sender, UserTaskModel task)
         {
-            _userTaskUtil.Tasks.Remove(task);
+            if (_userTaskUtil.Tasks.Contains(task))
+                _userTaskUtil.Tasks.Remove(task);
+
             sender.UpdateTasks();
         }
 
@@ -62,14 +67,14 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
         #endregion
 
         #region properties   
-        public ReadOnlyObservableCollection<UserTask> UserTasks
+        public ReadOnlyObservableCollection<UserTaskModel> UserTasks
         {
             get
             {
                 if (_userTaskUtil.Tasks == null)
                     return null;
 
-                _userTasks=new ReadOnlyObservableCollection<UserTask>(_userTaskUtil.Tasks);
+                _userTasks=new ReadOnlyObservableCollection<UserTaskModel>(_userTaskUtil.Tasks);
                 return _userTasks;                
             }
         }

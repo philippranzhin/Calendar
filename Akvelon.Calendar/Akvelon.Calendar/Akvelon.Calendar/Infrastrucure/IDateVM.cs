@@ -5,5 +5,5 @@
         event DateVMHandler NewVMNeeded;
     }
 
-    public delegate void DateVMHandler(IDateVM sender, DateInfo newDate);
+    public delegate void DateVMHandler(IDateVM sender, DateVM newDateVM);
 }

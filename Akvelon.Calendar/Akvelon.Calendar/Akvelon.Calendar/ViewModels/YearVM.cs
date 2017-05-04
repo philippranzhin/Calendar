@@ -1,41 +1,48 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using Akvelon.Calendar.Infrastrucure;
-using Akvelon.Calendar.Infrastrucure.UserTasks;
+using Akvelon.Calendar.Models;
 
 namespace Akvelon.Calendar.ViewModels
 {
-    public class YearVM : DateVM
+    public class YearVM : DateWithChildrenVM
     {
         #region constructors
-        public YearVM(DateInfo dateInfo, ReadOnlyObservableCollection<UserTask> tasks) : base(dateInfo, tasks)
+        public YearVM(DateInfoModel dateInfo, DateVMUtil dateVmUtil, ReadOnlyObservableCollection<UserTaskModel> tasks) : base(dateInfo, dateVmUtil, tasks)
         {
         }
         #endregion
 
         #region properties
-        protected override ReadOnlyObservableCollection<UserTask> Tasks
+        public override ReadOnlyObservableCollection<UserTaskModel> Tasks
         {
             get
-            {
-                ObservableCollection<UserTask> result = new ObservableCollection<UserTask>(_tasks.Where(task =>
+            {            
+                ObservableCollection<UserTaskModel> result = new ObservableCollection<UserTaskModel>(_tasks.Where(task =>
                     task.TaskDate.Year == _date.Date.Year &&
                     task.TaskDate.Month == _date.Date.Month));
 
-                return new ReadOnlyObservableCollection<UserTask>(result);
+                return new ReadOnlyObservableCollection<UserTaskModel>(result);
             }
         }
+
+        public override string Name => Date.Date.ToString("yyyy",CultureInfo.CurrentCulture);
+
+        protected override DateInfoModel NextDate=>new DateInfoModel(_date.Date.AddYears(+1), DateInfoType.Year);
+
+        protected override DateInfoModel PreviousDate => new DateInfoModel(_date.Date.AddYears(-1), DateInfoType.Year);
         #endregion
 
-        #region methods
-        public override DateVM GetNext()
+        #region methods    
+        protected override void ChidrenFilling()
         {
-            return new YearVM(new DateInfo(_date.Date.AddYears(+1), Enums.DateInfoType.Year), _tasks);
-        }
-
-        public override DateVM GetPrevious()
-        {
-            return new YearVM(new DateInfo(_date.Date.AddYears(-1), Enums.DateInfoType.Year), _tasks);
+            for (int i = 1; i <= DateTimeExtensions.MONTHS_IN_YEAR; i++)
+            {
+                DateTime currentDate = new DateTime(Date.Date.Year, i, 1);
+                RegisterChild(new DateInfoModel(currentDate, DateInfoType.Month));
+            }
         }
         #endregion
     }

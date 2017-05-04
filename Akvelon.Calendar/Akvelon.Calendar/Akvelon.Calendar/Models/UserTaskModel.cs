@@ -1,15 +1,16 @@
 ﻿using System;
+using Akvelon.Calendar.Infrastrucure;
 
-namespace Akvelon.Calendar.Infrastrucure.UserTasks
+namespace Akvelon.Calendar.Models
 {
-    public class UserTask : MVVMBase
+    public class UserTaskModel : MVVMBase
     {
         #region fields
 
         #endregion
 
         #region constructors
-        public UserTask(DateTime date)
+        public UserTaskModel(DateTime date)
         {
             TaskDate = date;
         }

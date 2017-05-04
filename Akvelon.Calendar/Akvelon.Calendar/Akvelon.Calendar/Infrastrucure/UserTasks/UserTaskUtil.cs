@@ -1,11 +1,12 @@
 ﻿using System.Collections.ObjectModel;
+using Akvelon.Calendar.Models;
 
 namespace Akvelon.Calendar.Infrastrucure.UserTasks
 {
     public class UserTaskUtil : MVVMBase
     {
         #region fields
-        private ObservableCollection<UserTask> _tasks;
+        private ObservableCollection<UserTaskModel> _tasks=new ObservableCollection<UserTaskModel>();
         #endregion
 
         #region constructor
@@ -13,7 +14,7 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
         #endregion
 
         #region properties
-        public ObservableCollection<UserTask> Tasks
+        public ObservableCollection<UserTaskModel> Tasks
         {
             get { return _tasks; }
             set

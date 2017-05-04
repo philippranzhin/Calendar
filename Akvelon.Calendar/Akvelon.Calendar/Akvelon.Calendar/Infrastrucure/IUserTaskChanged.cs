@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using Akvelon.Calendar.Infrastrucure.UserTasks;
+using Akvelon.Calendar.Models;
 
 namespace Akvelon.Calendar.Infrastrucure
 {
@@ -10,5 +10,5 @@ namespace Akvelon.Calendar.Infrastrucure
         void UpdateTasks();
     }
 
-    public delegate void TaskHandler(IUserTaskChanged sender, UserTask task);
+    public delegate void TaskHandler(IUserTaskChanged sender, UserTaskModel task);
 }

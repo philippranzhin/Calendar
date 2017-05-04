@@ -1,19 +1,173 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Akvelon.Calendar.Views.ApplicationView"
-             ItemsSource="{Binding CurrentDateCase.DateVMCollection}"
-             SelectedItem="{Binding CurrentDateCase.CurrentDateVM, Mode=TwoWay}"
+             xmlns:infrastrucure="clr-namespace:Akvelon.Calendar.Infrastrucure;assembly=Akvelon.Calendar.Android"
+             xmlns:behaviors="clr-namespace:Akvelon.Calendar.Infrastrucure.Behaviors;assembly=Akvelon.Calendar.Android"
+             x:Class="Akvelon.Calendar.Views.ApplicationView"              
+              ItemsSource="{Binding DateCases}"
+              SelectedItem="{Binding CurrentDateCase}">
+    <TabbedPage.ItemTemplate>
+        <DataTemplate>
+            <CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                          x:Class="Akvelon.Calendar.Views.ApplicationView"              
+                          ItemsSource="{Binding DateVMCollection}"
+                          SelectedItem="{Binding CurrentDateVM, Mode=TwoWay}" 
+                          Title="{Binding CurrentDateVM.Name}"
             >
-    <!--TODO-->
-    <CarouselPage.ItemTemplate>
-       <DataTemplate>
-           <ContentPage>
-                <Label Text="{Binding Date.Date}"
-                            HorizontalOptions="CenterAndExpand"
-                            VerticalOptions="CenterAndExpand">
-                </Label>
-            </ContentPage>
-       </DataTemplate>
-   </CarouselPage.ItemTemplate>
-</CarouselPage>
+                <CarouselPage.Resources>
+                    <ResourceDictionary>
+
+                        <DataTemplate x:Key="yearTemplate">
+                            <ContentPage>
+                                <StackLayout>
+                                    <Label Text="{Binding Date.Date.Year}"
+                                           HorizontalOptions="CenterAndExpand"
+                                           VerticalOptions="CenterAndExpand">
+                                    </Label>
+                                    <ListView ItemsSource="{Binding Children}">
+                                        <ListView.Behaviors>
+                                            <behaviors:EventToCommandBehavior EventName="ItemTapped" Command="{Binding NextViewCommand}" Converter="{behaviors:ItemTappedEventArgsToSelectedItemConverter}" />
+                                        </ListView.Behaviors>
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <ViewCell x:Name="ViewCell">
+                                                    <StackLayout Orientation="Horizontal">
+                                                        <Label Text="{Binding Name}"></Label>
+                                                        <Label TextColor="DodgerBlue" Text="{Binding Tasks.Count}"></Label>
+                                                    </StackLayout>
+                                                </ViewCell>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </StackLayout>
+                            </ContentPage>
+                        </DataTemplate>
+
+                        <!--TODO create an individual control-->
+                        <DataTemplate x:Key="monthTemplate">
+                            <ContentPage>
+                                <StackLayout Padding="10"  >
+                                    <Label Text="{Binding Name}"
+                                           HorizontalOptions="CenterAndExpand"
+                                           VerticalOptions="CenterAndExpand">
+                                    </Label>
+                                    <Label BindingContext="{Binding Date}"  x:Name="month" IsVisible="False">
+                                    </Label>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Column="0" Text="Sun" HorizontalOptions="Center"></Label>
+                                        <Label Grid.Column="1" Text="Mon" HorizontalOptions="Center"></Label>
+                                        <Label Grid.Column="2" Text="Tue" HorizontalOptions="Center"></Label>
+                                        <Label Grid.Column="3" Text="Wed" HorizontalOptions="Center"></Label>
+                                        <Label Grid.Column="4" Text="Thu" HorizontalOptions="Center"></Label>
+                                        <Label Grid.Column="5" Text="Fry" HorizontalOptions="Center"></Label>
+                                        <Label Grid.Column="6" Text="Sat" HorizontalOptions="Center"></Label>
+                                    </Grid>
+                                    <ListView ItemsSource="{Binding Children}">
+                                        <ListView.Behaviors>
+                                            <behaviors:EventToCommandBehavior EventName="ItemTapped" Command="{Binding NextViewCommand}" Converter="{behaviors:ItemTappedEventArgsToSelectedItemConverter}" />
+                                        </ListView.Behaviors>
+                                        <ListView.ItemTemplate >
+                                            <DataTemplate >
+                                                <ViewCell x:Name="ViewCell2">
+                                                    <Grid VerticalOptions="FillAndExpand">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                                        </Grid.ColumnDefinitions>
+                                                        <StackLayout  Grid.Column="0" x:Name="Cell1" BindingContext="{Binding Children, Converter={behaviors:DateCollectionConverter}, ConverterParameter=0}" Orientation="Vertical">
+                                                            <Button Text="{Binding Date.Date.Day}" Command="{Binding NextViewCommand}" CommandParameter="{Binding BindingContext, Source={x:Reference Cell1}}" IsEnabled="{Binding Date,Converter={behaviors:IsDayOfMonthConverter}, ConverterParameter={Binding BindingContext, Source={x:Reference month}} }"></Button>
+                                                        </StackLayout>
+                                                        <StackLayout  Grid.Column="1" x:Name="Cell2" BindingContext="{Binding Children, Converter={behaviors:DateCollectionConverter}, ConverterParameter=1}">
+                                                            <Button Text="{Binding Date.Date.Day}" Command="{Binding NextViewCommand}" CommandParameter="{Binding BindingContext, Source={x:Reference Cell2}}" IsEnabled="{Binding Date,Converter={behaviors:IsDayOfMonthConverter}, ConverterParameter={Binding BindingContext, Source={x:Reference month}} }"></Button>
+                                                        </StackLayout>
+                                                        <StackLayout  Grid.Column="2" x:Name="Cell3" BindingContext="{Binding Children, Converter={behaviors:DateCollectionConverter}, ConverterParameter=2}">
+                                                            <Button Text="{Binding Date.Date.Day}" Command="{Binding NextViewCommand}" CommandParameter="{Binding BindingContext, Source={x:Reference Cell3}}" IsEnabled="{Binding Date,Converter={behaviors:IsDayOfMonthConverter}, ConverterParameter={Binding BindingContext, Source={x:Reference month}} }"></Button>
+                                                        </StackLayout>
+                                                        <StackLayout  Grid.Column="3" x:Name="Cell4" BindingContext="{Binding Children, Converter={behaviors:DateCollectionConverter}, ConverterParameter=3}">
+                                                            <Button Text="{Binding Date.Date.Day}" Command="{Binding NextViewCommand}" CommandParameter="{Binding BindingContext, Source={x:Reference Cell4}}" IsEnabled="{Binding Date,Converter={behaviors:IsDayOfMonthConverter}, ConverterParameter={Binding BindingContext, Source={x:Reference month}} }"></Button>
+                                                        </StackLayout>
+                                                        <StackLayout  Grid.Column="4" x:Name="Cell5" BindingContext="{Binding Children, Converter={behaviors:DateCollectionConverter}, ConverterParameter=4}">
+                                                            <Button Text="{Binding Date.Date.Day}" Command="{Binding NextViewCommand}" CommandParameter="{Binding BindingContext, Source={x:Reference Cell5}}" IsEnabled="{Binding Date,Converter={behaviors:IsDayOfMonthConverter}, ConverterParameter={Binding BindingContext, Source={x:Reference month}} }"></Button>
+                                                        </StackLayout>
+                                                        <StackLayout  Grid.Column="5" x:Name="Cell6"  BindingContext="{Binding Children, Converter={behaviors:DateCollectionConverter}, ConverterParameter=5}">
+                                                            <Button Text="{Binding Date.Date.Day}" Command="{Binding NextViewCommand}" CommandParameter="{Binding BindingContext, Source={x:Reference Cell6}}" IsEnabled="{Binding Date,Converter={behaviors:IsDayOfMonthConverter}, ConverterParameter={Binding BindingContext, Source={x:Reference month}} }"></Button>
+                                                        </StackLayout>
+                                                        <StackLayout  Grid.Column="6" x:Name="Cell7"  BindingContext="{Binding Children, Converter={behaviors:DateCollectionConverter}, ConverterParameter=6}">
+                                                            <Button Text="{Binding Date.Date.Day}" Command="{Binding NextViewCommand}" CommandParameter="{Binding BindingContext, Source={x:Reference Cell7}}" IsEnabled="{Binding Date,Converter={behaviors:IsDayOfMonthConverter}, ConverterParameter={Binding BindingContext, Source={x:Reference month}} }"></Button>
+                                                        </StackLayout>
+
+                                                    </Grid>
+                                                </ViewCell>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </StackLayout>
+                            </ContentPage>
+                        </DataTemplate>
+
+                        <DataTemplate x:Key="weekTemplate">
+                            <ContentPage>
+                                <ListView ItemsSource="{Binding Children}">
+                                    <ListView.Behaviors>
+                                        <behaviors:EventToCommandBehavior EventName="ItemTapped" Command="{Binding NextViewCommand}" Converter="{behaviors:ItemTappedEventArgsToSelectedItemConverter}" />
+                                    </ListView.Behaviors>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <ViewCell x:Name="ViewCell3" >
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label Text="{Binding Name}"></Label>
+                                                    <Label Text="{Binding Tasks.Count}"></Label>
+                                                    <Label TextColor="DodgerBlue" Text="{Binding Tasks.Count}"></Label>
+                                                </StackLayout>
+                                            </ViewCell>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </ContentPage>
+                        </DataTemplate>
+                        <DataTemplate x:Key="dayTemplate">
+                            <ContentPage>
+                                <ListView ItemsSource="{Binding Children}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <ViewCell x:Name="ViewCell3">
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label Text="{Binding Name}"></Label>
+                                                    <Label TextColor="DodgerBlue" Text="{Binding Tasks.Count}"></Label>
+                                                    <Button HorizontalOptions="EndAndExpand" BackgroundColor="WhiteSmoke" TextColor="CornflowerBlue"  BorderRadius="100" Command="{Binding AddTaskCommand}" Text="+"></Button>
+                                                </StackLayout>
+                                            </ViewCell>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </ContentPage>
+                        </DataTemplate>
+
+                    </ResourceDictionary>
+                </CarouselPage.Resources>
+                <CarouselPage.ItemTemplate>
+                    <behaviors:DateTemplateSelector x:Key="dateTemplateSelector"
+                                                    YearTemplate="{StaticResource yearTemplate}"
+                                                    MonthTemplate="{StaticResource monthTemplate}"
+                                                    WeekTemplate="{StaticResource weekTemplate}"
+                                                    DayTemplate="{StaticResource dayTemplate}" />
+                </CarouselPage.ItemTemplate>
+            </CarouselPage>
+        </DataTemplate>
+    </TabbedPage.ItemTemplate>
+    </TabbedPage>
