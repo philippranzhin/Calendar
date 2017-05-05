@@ -1,22 +1,47 @@
-﻿using Android.App;
-using Android.Content.PM;
-using Android.OS;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MainActivity.cs" company="Akvelon">
+//   Philipp Ranzhin
+// </copyright>
+// <summary>
+//   The main activity of android application
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Akvelon.Calendar.Droid
 {
-	[Activity (Label = "Akvelon.Calendar", Icon = "@drawable/icon", Theme="@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
-	{
-		protected override void OnCreate (Bundle bundle)
-		{
-			TabLayoutResource = Resource.Layout.Tabbar;
-			ToolbarResource = Resource.Layout.Toolbar; 
+    using Android.App;
+    using Android.Content.PM;
+    using Android.OS;
 
-			base.OnCreate (bundle);
+    using Xamarin.Forms;
+    using Xamarin.Forms.Platform.Android;
 
-			global::Xamarin.Forms.Forms.Init (this, bundle);
-			LoadApplication (new Akvelon.Calendar.App ());
-		}
-	}
+    /// <summary>
+    ///     The main activity.
+    /// </summary>
+    [Activity(
+        Label = "Akvelon.Calendar",
+        Icon = "@drawable/icon",
+        Theme = "@style/MainTheme",
+        MainLauncher = true,
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    public class MainActivity : FormsAppCompatActivity
+    {
+        /// <summary>
+        /// The on create.
+        /// </summary>
+        /// <param name="bundle">
+        /// The bundle.
+        /// </param>
+        protected override void OnCreate(Bundle bundle)
+        {
+            FormsAppCompatActivity.TabLayoutResource = Resource.Layout.Tabbar;
+            FormsAppCompatActivity.ToolbarResource = Resource.Layout.Toolbar;
+
+            base.OnCreate(bundle);
+
+            Forms.Init(this, bundle);
+            this.LoadApplication(new App());
+        }
+    }
 }
-

@@ -1,89 +1,151 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using Akvelon.Calendar.Infrastrucure;
-using Akvelon.Calendar.Infrastrucure.UserTasks;
-using Akvelon.Calendar.Models;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ApplicationVm.cs" company="Akvelon">
+//   Philipp Ranzhin
+// </copyright>
+// <summary>
+//   The application view model 
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Akvelon.Calendar.ViewModels
 {
-    public class ApplicationVM : MVVMBase
+    using System;
+    using System.Collections.ObjectModel;
+
+    using Akvelon.Calendar.Infrastrucure.DateVmBase;
+    using Akvelon.Calendar.Infrastrucure.UserTasks;
+    using Akvelon.Calendar.Models;
+    using Akvelon.Calendar.Models.Enums;
+
+    /// <summary>
+    ///     The application view model. Provides a collection of DateCase, selected DateCase.
+    /// </summary>
+    public class ApplicationVm : MvvmBase
     {
-        #region fields
-        private ApplicationModel _model;
-        private readonly UserTaskMediator _taskMedidator;
-        private DateCaseVM _currentDateCase;
-        private ObservableCollection<DateCaseVM> _dateCases=new ObservableCollection<DateCaseVM>();
-        #endregion
+        /// <summary>
+        ///     The task Mediator.
+        /// </summary>
+        private readonly UserTaskMediator taskMediator;
 
-        #region constructors
-        public ApplicationVM(ApplicationModel model, DateInfoType dateType = DateInfoType.Year)
+        /// <summary>
+        ///     The current date case.
+        /// </summary>
+        private DateCaseVm currentDateCase;
+
+        /// <summary>
+        ///     The date cases.
+        /// </summary>
+        private ObservableCollection<DateCaseVm> dateCases = new ObservableCollection<DateCaseVm>();
+
+        /// <summary>
+        ///     The model.
+        /// </summary>
+        private ApplicationModel model;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ApplicationVm"/> class.
+        /// </summary>
+        /// <param name="model">
+        /// The model.
+        /// </param>
+        /// <param name="dateType">
+        /// The date type.
+        /// </param>
+        public ApplicationVm(ApplicationModel model, DateInfoType dateType = DateInfoType.Year)
         {
-            _taskMedidator = new UserTaskMediator();
-            _model = model;
-            DateVMUtil util=new DateVMUtil(_taskMedidator.UserTasks);
-            DateInfoModel currentDate = new DateInfoModel(DateTime.Now, dateType);            
-            AddDateCase(new DateCaseVM(util.GetOrCreate(currentDate), _taskMedidator));
-        }
-        #endregion
-
-        #region properties
-        public ApplicationModel Model
-        {
-            get { return _model; }
-            private set
-            {
-                _model = value;
-                OnPropertyChanged("Model");
-            }
+            this.taskMediator = new UserTaskMediator();
+            this.model = model;
+            DateVmManager manager = new DateVmManager(this.taskMediator.Tasks);
+            DateInfoModel currentDate = new DateInfoModel(DateTime.Now, dateType);
+            this.AddDateCase(new DateCaseVm(manager.GetOrCreate(currentDate), this.taskMediator));
         }
 
-        public string Name
-        {
-            get { return Model.Name; }
-            private set
-            {
-                Model.Name = value;
-                OnPropertyChanged("Name");
-            }
-        }
-
-        public DateCaseVM CurrentDateCase
+        /// <summary>
+        ///     Gets or sets the current date case.
+        /// </summary>
+        public DateCaseVm CurrentDateCase
         {
             get
             {
-                return _currentDateCase;                 
+                return this.currentDateCase;
             }
+
             set
             {
-                _currentDateCase = value;
-                OnPropertyChanged();
-                OnPropertyChanged("DateCasesX");
+                this.currentDateCase = value;
+                this.OnPropertyChanged();
             }
         }
 
-        public ObservableCollection<DateCaseVM> DateCases
+        /// <summary>
+        ///     Gets the date cases.
+        /// </summary>
+        public ObservableCollection<DateCaseVm> DateCases
         {
-            get { return _dateCases; }
+            get
+            {
+                return this.dateCases;
+            }
+
             private set
             {
-                _dateCases = value;
-                OnPropertyChanged();
+                this.dateCases = value;
+                this.OnPropertyChanged();
             }
         }
-        #endregion
 
-        #region methods
-        private void AddDateCase(DateCaseVM dateCase)
+        /// <summary>
+        ///     Gets the model.
+        /// </summary>
+        public ApplicationModel Model
         {
-            DateCases.Add(dateCase);
-
-            dateCase.NewVMNeeded += (sender, newVM) =>
+            get
             {
-                if (CurrentDateCase == dateCase)
-                    AddDateCase(new DateCaseVM(newVM, _taskMedidator));
-            };
-            CurrentDateCase = dateCase;
+                return this.model;
+            }
+
+            private set
+            {
+                this.model = value;
+                this.OnPropertyChanged("Model");
+            }
         }
-        #endregion
+
+        /// <summary>
+        ///     Gets the name.
+        /// </summary>
+        public string Name
+        { 
+            get
+            {
+                return this.Model.Name;
+            }
+
+            private set
+            {
+                this.Model.Name = value;
+                this.OnPropertyChanged("Name");
+            }
+        }
+
+        /// <summary>
+        /// The add date case.
+        /// </summary>
+        /// <param name="dateCase">
+        /// The date case.
+        /// </param>
+        private void AddDateCase(DateCaseVm dateCase)
+        {
+            this.DateCases.Add(dateCase);
+
+            dateCase.NewVmNeeded += (sender, newVm) =>
+                {
+                    if (this.CurrentDateCase == dateCase)
+                    {
+                        this.AddDateCase(new DateCaseVm(newVm, this.taskMediator));
+                    }
+                };
+            this.CurrentDateCase = dateCase;
+        }
     }
 }

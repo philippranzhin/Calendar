@@ -1,38 +1,79 @@
-﻿using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using Akvelon.Calendar.Infrastrucure;
-using Akvelon.Calendar.Models;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="HourVM.cs" company="Akvelon">
+//   Philipp Ranzhin
+// </copyright>
+// <summary>
+//   The hour view model 
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Akvelon.Calendar.ViewModels
 {
-    class HourVM:DateVM
+    using System.Collections.ObjectModel;
+    using System.Globalization;
+    using System.Linq;
+
+    using Akvelon.Calendar.Infrastrucure.DateVmBase;
+    using Akvelon.Calendar.Models;
+    using Akvelon.Calendar.Models.Enums;
+
+    /// <summary>
+    ///     The hour view model 
+    /// </summary>
+    internal class HourVm : DateVm
     {
-        #region constructors
-        public HourVM(DateInfoModel dateInfo, DateVMUtil dateVmUtil, ReadOnlyObservableCollection<UserTaskModel> tasks) : base(dateInfo, dateVmUtil, tasks)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HourVm"/> class.
+        /// </summary>
+        /// <param name="dateInfo">
+        /// The date info.
+        /// </param>
+        /// <param name="factory">
+        /// The factory.
+        /// </param>
+        /// <param name="tasks">
+        /// The tasks.
+        /// </param>
+        public HourVm(
+            DateInfoModel dateInfo,
+            IDateVmFactory factory,
+            ReadOnlyObservableCollection<UserTaskModel> tasks)
+            : base(dateInfo, factory, tasks)
         {
         }
-        #endregion
 
-        #region properties
-        public override ReadOnlyObservableCollection<UserTaskModel> Tasks
+        /// <summary>
+        ///     The name.
+        /// </summary>
+        public override string Name => this.Date.Date.ToString("h tt", CultureInfo.CurrentCulture);
+
+        /// <summary>
+        ///     Gets the user tasks.
+        /// </summary>
+        public override ReadOnlyObservableCollection<UserTaskModel> UserTasks
         {
             get
             {
-                ObservableCollection<UserTaskModel> result = new ObservableCollection<UserTaskModel>(_tasks.Where(task =>
-                    task.TaskDate.Year == _date.Date.Year &&
-                    task.TaskDate.Month == _date.Date.Month &&
-                    task.TaskDate.Day == _date.Date.Day &&
-                    task.TaskDate.Hour==_date.Date.Hour));
+                ObservableCollection<UserTaskModel> result = new ObservableCollection<UserTaskModel>(
+                    this.Tasks.Where(
+                        task => task.TaskDate.Year == this.Date.Date.Year && task.TaskDate.Month == this.Date.Date.Month
+                                && task.TaskDate.Day == this.Date.Date.Day
+                                && task.TaskDate.Hour == this.Date.Date.Hour));
 
                 return new ReadOnlyObservableCollection<UserTaskModel>(result);
             }
         }
-        public override string Name => Date.Date.ToString("h tt", CultureInfo.CurrentCulture);
 
-        protected override DateInfoModel NextDate => new DateInfoModel(_date.Date.AddHours(+1), DateInfoType.Hour);
+        /// <summary>
+        ///     The next date.
+        /// </summary>
+        protected override DateInfoModel NextDate => new DateInfoModel(this.Date.Date.AddHours(+1), DateInfoType.Hour);
 
-        protected override DateInfoModel PreviousDate => new DateInfoModel(_date.Date.AddHours(-1), DateInfoType.Hour);
-        #endregion
+        /// <summary>
+        ///     The previous date.
+        /// </summary>
+        protected override DateInfoModel PreviousDate => new DateInfoModel(
+            this.Date.Date.AddHours(-1),
+            DateInfoType.Hour);
     }
 }

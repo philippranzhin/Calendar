@@ -1,14 +1,29 @@
-﻿using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ApplicationView.xaml.cs" company="Akvelon">
+//   Philipp Ranzhin
+// </copyright>
+// <summary>
+//   The application view.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Akvelon.Calendar.Views
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class ApplicationView : TabbedPage
+    using Xamarin.Forms;
+    using Xamarin.Forms.Xaml;
+
+    /// <summary>
+    ///     The application view.
+    /// </summary>
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class ApplicationView : TabbedPage
     {
-		public ApplicationView ()
-		{
-			InitializeComponent ();
-		}
-	}
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ApplicationView" /> class.
+        /// </summary>
+        public ApplicationView()
+        {
+            this.InitializeComponent();
+        }
+    }
 }

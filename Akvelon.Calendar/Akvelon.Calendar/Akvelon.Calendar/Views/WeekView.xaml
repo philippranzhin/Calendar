@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--TODO remake this-->
+<ContentView
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="Akvelon.Calendar.Views.WeekView" 
+    x:Name="RootControl">
+    
+    <ContentView.Content>
+        <Grid x:Name="Grid" VerticalOptions="FillAndExpand">
+            <Grid.Resources>
+                <ResourceDictionary>
+                    <DataTemplate x:Key="DayTemplate" x:Name="DayTemplate" >
+                        <StackLayout >
+                            <Label Text="{Binding Date.Day}"></Label>
+                        </StackLayout>
+                    </DataTemplate>
+                </ResourceDictionary>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+           
+        </Grid>
+    </ContentView.Content>
+</ContentView>

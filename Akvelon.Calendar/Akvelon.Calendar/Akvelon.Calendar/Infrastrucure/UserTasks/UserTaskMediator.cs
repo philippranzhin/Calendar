@@ -1,83 +1,147 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using Akvelon.Calendar.Models;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="UserTaskMediator.cs" company="Akvelon">
+//   Philipp Ranzhin
+// </copyright>
+// <summary>
+//   a mediator between Year/Month/Day/Hour view models and Tasks
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Akvelon.Calendar.Infrastrucure.UserTasks
 {
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+
+    using Akvelon.Calendar.Models;
+
     /// <summary>
-    /// a mediator between Year/Month/Day/Hour view models and Tasks
+    /// The user task mediator. Is a mediator between UserTaskManager and the collection of IUserTaskChanged.
     /// </summary>
     public class UserTaskMediator
     {
-        #region fields
-        private ObservableCollection<IUserTaskChanged> _taskClients;
-        private readonly UserTaskUtil _userTaskUtil;
-        private ReadOnlyObservableCollection<UserTaskModel> _userTasks;
-        #endregion
+        /// <summary>
+        ///     The user task manager.
+        /// </summary>
+        private readonly UserTaskManager userTaskManager;
 
-        #region constructor
-        public UserTaskMediator(List<IUserTaskChanged> taskClients=null)
-        {          
-            _userTaskUtil = new UserTaskUtil();
-            taskClients?.ForEach(AddClient);
-        }
-        #endregion
+        /// <summary>
+        ///     The task clients.
+        /// </summary>
+        private ObservableCollection<IUserTaskChanged> taskClients;
 
-        #region methods
-        private void AddMethod(IUserTaskChanged sender, UserTaskModel task)
+        /// <summary>
+        ///     The _user tasks.
+        /// </summary>
+        private ReadOnlyObservableCollection<UserTaskModel> tasks;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserTaskMediator"/> class.
+        /// </summary>
+        /// <param name="taskClients">
+        /// The task clients.
+        /// </param>
+        public UserTaskMediator(List<IUserTaskChanged> taskClients = null)
         {
-            if(!_userTaskUtil.Tasks.Contains(task))
-                _userTaskUtil.Tasks.Add(task);
-
-            sender.UpdateTasks();
+            this.userTaskManager = new UserTaskManager();
+            taskClients?.ForEach(this.AddClient);
         }
 
-        private void RemoveMethod(IUserTaskChanged sender, UserTaskModel task)
-        {
-            if (_userTaskUtil.Tasks.Contains(task))
-                _userTaskUtil.Tasks.Remove(task);
-
-            sender.UpdateTasks();
-        }
-
-        public void AddClient(IUserTaskChanged client)
-        {
-            if(_taskClients==null)
-                _taskClients=new ObservableCollection<IUserTaskChanged>();
-
-            if (_taskClients.Contains(client))
-                return;
-
-            _taskClients.Add(client);
-
-            client.TaskAdded += AddMethod;
-            client.TaskRemoved += AddMethod;
-        }
-
-        public void RemoveClient(IUserTaskChanged client)
-        {
-            if (!_taskClients.Contains(client))
-                return;
-
-            _taskClients.Remove(client);
-
-            client.TaskAdded -= AddMethod;
-            client.TaskRemoved -= RemoveMethod;
-        }
-        #endregion
-
-        #region properties   
-        public ReadOnlyObservableCollection<UserTaskModel> UserTasks
+        /// <summary>
+        ///     Gets the user tasks.
+        /// </summary>
+        public ReadOnlyObservableCollection<UserTaskModel> Tasks
         {
             get
             {
-                if (_userTaskUtil.Tasks == null)
+                if (this.userTaskManager.Tasks == null)
+                {
                     return null;
+                }
 
-                _userTasks=new ReadOnlyObservableCollection<UserTaskModel>(_userTaskUtil.Tasks);
-                return _userTasks;                
+                this.tasks = new ReadOnlyObservableCollection<UserTaskModel>(this.userTaskManager.Tasks);
+                return this.tasks;
             }
         }
-        #endregion
+
+        /// <summary>
+        /// The add client.
+        /// </summary>
+        /// <param name="client">
+        /// The client.
+        /// </param>
+        public void AddClient(IUserTaskChanged client)
+        {
+            if (this.taskClients == null)
+            {
+                this.taskClients = new ObservableCollection<IUserTaskChanged>();
+            }
+
+            if (this.taskClients.Contains(client))
+            {
+                return;
+            }
+
+            this.taskClients.Add(client);
+
+            client.TaskAdded += this.AddTask;
+            client.TaskRemoved += this.RemoveTask;
+        }
+
+        /// <summary>
+        /// The remove client.
+        /// </summary>
+        /// <param name="client">
+        /// The client.
+        /// </param>
+        public void RemoveClient(IUserTaskChanged client)
+        {
+            if (!this.taskClients.Contains(client))
+            {
+                return;
+            }
+
+            this.taskClients.Remove(client);
+
+            client.TaskAdded -= this.AddTask;
+            client.TaskRemoved -= this.RemoveTask;
+        }
+
+        /// <summary>
+        /// The add task.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="task">
+        /// The task.
+        /// </param>
+        private void AddTask(IUserTaskChanged sender, UserTaskModel task)
+        {
+            if (!this.userTaskManager.Tasks.Contains(task))
+            {
+                this.userTaskManager.Tasks.Add(task);
+            }
+
+            sender.UpdateTasks();
+        }
+
+        /// <summary>
+        /// The remove task.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="task">
+        /// The task.
+        /// </param>
+        private void RemoveTask(IUserTaskChanged sender, UserTaskModel task)
+        {
+            if (this.userTaskManager.Tasks.Contains(task))
+            {
+                this.userTaskManager.Tasks.Remove(task);
+            }
+
+            sender.UpdateTasks();
+        }
     }
 }

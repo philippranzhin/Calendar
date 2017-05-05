@@ -1,76 +1,122 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using Akvelon.Calendar.Infrastrucure;
-using Akvelon.Calendar.Models;
-
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="WeekVM.cs" company="Akvelon">
+//   Philipp Ranzhin
+// </copyright>
+// <summary>
+//   The week view model 
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Akvelon.Calendar.ViewModels
 {
-    public class WeekVM : DateWithChildrenVM
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Globalization;
+    using System.Linq;
+
+    using Akvelon.Calendar.Infrastrucure.Extensions;
+    using Akvelon.Calendar.Infrastrucure.DateVmBase;
+    using Akvelon.Calendar.Models;
+    using Akvelon.Calendar.Models.Enums;
+
+    /// <summary>
+    ///     The week view model 
+    /// </summary>
+    public class WeekVm : DateWithChildrenVm
     {
-        #region constructors
-        public WeekVM(DateInfoModel dateInfo, DateVMUtil dateVmUtil, ReadOnlyObservableCollection<UserTaskModel> tasks) : base(dateInfo, dateVmUtil, tasks)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WeekVm"/> class.
+        /// </summary>
+        /// <param name="dateInfo">
+        /// The date info.
+        /// </param>
+        /// <param name="factory">
+        /// The factory.
+        /// </param>
+        /// <param name="tasks">
+        /// The tasks.
+        /// </param>
+        public WeekVm(
+            DateInfoModel dateInfo,
+            IDateVmFactory factory,
+            ReadOnlyObservableCollection<UserTaskModel> tasks)
+            : base(dateInfo, factory, tasks)
         {
         }
-        #endregion
 
-        #region properties
-        public override ReadOnlyObservableCollection<UserTaskModel> Tasks
+        /// <summary>
+        ///     Gets the day row.
+        /// </summary>
+        public string DayRow
         {
             get
             {
-                ObservableCollection<UserTaskModel> result = new ObservableCollection<UserTaskModel>(_tasks.Where(task =>
-                    task.TaskDate.Year == _date.Date.Year &&
-                    task.TaskDate.Month == _date.Date.Month &&
-                    task.TaskDate >= _date.Date.GetFirstDateOfWeek() &&
-                    task.TaskDate <= _date.Date.GetLastDateOfWeek()));
-
-                return new ReadOnlyObservableCollection<UserTaskModel>(result);
+                string row = string.Empty;
+                this.Children.ToList().ForEach(day => row += $"{day.DateInfo.Date.Day}\t");
+                return row;
             }
         }
 
+        /// <summary>
+        ///     Gets the name.
+        /// </summary>
         public override string Name
         {
             get
             {
                 string result = string.Empty;
-                result += Children.First().Date.Date.ToString("dd MMM", CultureInfo.CurrentCulture);
+                result += this.Children.First().DateInfo.Date.ToString("dd MMM", CultureInfo.CurrentCulture);
                 result += " - ";
-                result += Children.Last().Date.Date.ToString("dd MMM", CultureInfo.CurrentCulture);
+                result += this.Children.Last().DateInfo.Date.ToString("dd MMM", CultureInfo.CurrentCulture);
                 return result;
             }
         }
 
-        public string DayRow
+        /// <summary>
+        ///     Gets the user tasks.
+        /// </summary>
+        public override ReadOnlyObservableCollection<UserTaskModel> UserTasks
         {
             get
             {
-                string Row = "";
-                Children.ToList().ForEach(day => Row+=$"{day.Date.Date.Day}\t");
-                return Row;
+                ObservableCollection<UserTaskModel> result = new ObservableCollection<UserTaskModel>(
+                    this.Tasks.Where(
+                        task => task.TaskDate.Year == this.Date.Date.Year && task.TaskDate.Month == this.Date.Date.Month
+                                && task.TaskDate >= this.Date.Date.GetFirstDateOfWeek()
+                                && task.TaskDate <= this.Date.Date.GetLastDateOfWeek()));
+
+                return new ReadOnlyObservableCollection<UserTaskModel>(result);
             }
         }
 
-        protected override DateInfoModel NextDate => new DateInfoModel(_date.Date.AddDays(DateTimeExtensions.WEEKSIZE), DateInfoType.Week);
+        /// <summary>
+        ///     The next date.
+        /// </summary>
+        protected override DateInfoModel NextDate => new DateInfoModel(
+            this.Date.Date.AddDays(DateTimeExtensions.Weeksize),
+            DateInfoType.Week);
 
-        protected override DateInfoModel PreviousDate => new DateInfoModel(_date.Date.AddDays(-DateTimeExtensions.WEEKSIZE), DateInfoType.Week);
-        #endregion
+        /// <summary>
+        ///     The previous date.
+        /// </summary>
+        protected override DateInfoModel PreviousDate => new DateInfoModel(
+            this.Date.Date.AddDays(-DateTimeExtensions.Weeksize),
+            DateInfoType.Week);
 
-        #region methods     
-        protected override void ChidrenFilling()
+        /// <summary>
+        ///     The children filling.
+        /// </summary>
+        protected override void ChildrenFilling()
         {
-            DateTime currentDate = Date.Date.GetFirstDateOfWeek();
+            DateTime currentDate = this.Date.Date.GetFirstDateOfWeek();
 
-            RegisterChild(new DateInfoModel(currentDate, DateInfoType.Day));
+            this.RegisterChild(new DateInfoModel(currentDate, DateInfoType.Day));
             currentDate = currentDate.AddDays(1);
-            while (!currentDate.IsFirst())
+            while (!currentDate.IsFirstDayOfWeek())
             {
-                RegisterChild(new DateInfoModel(currentDate, DateInfoType.Day));
+                this.RegisterChild(new DateInfoModel(currentDate, DateInfoType.Day));
                 currentDate = currentDate.AddDays(1);
             }
         }
-        #endregion
     }
 }
