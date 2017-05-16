@@ -26,12 +26,12 @@ namespace Akvelon.Calendar.Models
         /// </param>
         public UserTaskModel(DateTime date)
         {
-            this.TaskDate = date;
+            this.Date = date;
         }
 
         /// <summary>
         ///     Gets the task date.
         /// </summary>
-        public DateTime TaskDate { get; }
+        public DateTime Date { get; }
     }
 }

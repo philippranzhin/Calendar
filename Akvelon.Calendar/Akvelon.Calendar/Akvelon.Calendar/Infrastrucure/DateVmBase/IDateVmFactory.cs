@@ -33,6 +33,6 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// <returns>
         /// The <see cref="DateVm"/>.
         /// </returns>
-        DateVm Create(DateInfoModel dateInfo,IDateVmFactory factory,ReadOnlyObservableCollection<UserTaskModel> tasks);
+        DateVm Create(DateInfoModel dateInfo, IDateVmFactory factory, ReadOnlyObservableCollection<UserTaskModel> tasks);
     }
 }

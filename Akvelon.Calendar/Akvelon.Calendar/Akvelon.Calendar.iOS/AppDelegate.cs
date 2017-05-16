@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AppDelegate.cs" company="">
-//   
+// <copyright file="AppDelegate.cs" company="Akvelon">
+//   Philipp Ranzhin
 // </copyright>
 // <summary>
 //   The app delegate.
@@ -9,7 +9,12 @@
 
 namespace Akvelon.Calendar.iOS
 {
+    using Akvelon.Calendar.Models.Enums;
+    using Akvelon.Calendar.Models.Interfaces;
+
     using Foundation;
+
+    using TinyIoC;
 
     using UIKit;
 
@@ -19,6 +24,7 @@ namespace Akvelon.Calendar.iOS
     // The UIApplicationDelegate for the application. This class is responsible for launching the 
     // User Interface of the application, as well as listening (and optionally responding) to 
     // application events from iOS.
+
     /// <summary>
     ///     The app delegate.
     /// </summary>
@@ -44,7 +50,12 @@ namespace Akvelon.Calendar.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             Forms.Init();
-            this.LoadApplication(new App());
+
+            AppInjection.Register("Calendar", DateRepresentationType.Year);
+
+            IApplicationModel implementation = TinyIoCContainer.Current.Resolve<IApplicationModel>();
+
+            this.LoadApplication(new App(implementation));
 
             return base.FinishedLaunching(app, options);
         }

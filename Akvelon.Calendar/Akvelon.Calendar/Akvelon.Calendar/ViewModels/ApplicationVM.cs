@@ -16,6 +16,9 @@ namespace Akvelon.Calendar.ViewModels
     using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
     using Akvelon.Calendar.Models.Enums;
+    using Akvelon.Calendar.Models.Interfaces;
+
+    using Xamarin.Forms;
 
     /// <summary>
     ///     The application view model. Provides a collection of DateCase, selected DateCase.
@@ -25,79 +28,98 @@ namespace Akvelon.Calendar.ViewModels
         /// <summary>
         ///     The task Mediator.
         /// </summary>
-        private readonly UserTaskMediator taskMediator;
+        private readonly IUserTaskMediator taskMediator;
 
         /// <summary>
-        ///     The current date case.
+        /// The view model manager.
         /// </summary>
-        private DateCaseVm currentDateCase;
-
-        /// <summary>
-        ///     The date cases.
-        /// </summary>
-        private ObservableCollection<DateCaseVm> dateCases = new ObservableCollection<DateCaseVm>();
+        private readonly IDateVmFactory viewModelManager;
 
         /// <summary>
         ///     The model.
         /// </summary>
-        private ApplicationModel model;
+        private IApplicationModel model;
+
+        /// <summary>
+        /// The children.
+        /// This property is not needed now, but later it should be an important part of the navigation
+        /// </summary>
+        private ObservableCollection<DateCase> cases;
+
+        /// <summary>
+        /// The current child.
+        /// </summary>
+        private DateCase selectedCase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationVm"/> class.
         /// </summary>
         /// <param name="model">
-        /// The model.
+        /// The base application model.
         /// </param>
-        /// <param name="dateType">
-        /// The date type.
-        /// </param>
-        public ApplicationVm(ApplicationModel model, DateInfoType dateType = DateInfoType.Year)
+        public ApplicationVm(IApplicationModel model)
         {
-            this.taskMediator = new UserTaskMediator();
-            this.model = model;
-            DateVmManager manager = new DateVmManager(this.taskMediator.Tasks);
-            DateInfoModel currentDate = new DateInfoModel(DateTime.Now, dateType);
-            this.AddDateCase(new DateCaseVm(manager.GetOrCreate(currentDate), this.taskMediator));
+            this.Model = model;
+            this.taskMediator = this.Model.TaskMediator;
+            this.viewModelManager = this.Model.Factory;
+            DateInfoModel currentDate = new DateInfoModel(DateTime.Now, this.Model.StartDateType);
+
+            this.SelectedCase = new DateCase(this.viewModelManager.Create(currentDate, this.viewModelManager, this.taskMediator.Tasks));
         }
 
         /// <summary>
-        ///     Gets or sets the current date case.
+        /// The title.
         /// </summary>
-        public DateCaseVm CurrentDateCase
+        public string Title => this.SelectedCase.SelectedChild.DateInfo.DateType.ToString();
+
+
+        /// <summary>
+        /// Gets or sets the children.
+        /// </summary>
+        public ObservableCollection<DateCase> Cases
         {
             get
             {
-                return this.currentDateCase;
+                return this.cases;
             }
 
             set
             {
-                this.currentDateCase = value;
+                this.cases = value;
                 this.OnPropertyChanged();
             }
         }
 
         /// <summary>
-        ///     Gets the date cases.
+        /// Gets or sets the selected child.
         /// </summary>
-        public ObservableCollection<DateCaseVm> DateCases
+        public DateCase SelectedCase
         {
             get
             {
-                return this.dateCases;
+                return this.selectedCase;
             }
 
-            private set
+            set
             {
-                this.dateCases = value;
-                this.OnPropertyChanged();
+                if (this.selectedCase != null)
+                {
+                    this.selectedCase.NewVmNeeded -= this.OnNewVm;
+                    this.taskMediator.RemoveClient(this.selectedCase);
+                }
+
+                value.NewVmNeeded += this.OnNewVm;
+                this.taskMediator.AddClient(value);
+
+                this.selectedCase = value;
+                this.OnPropertyChanged();          
             }
         }
 
         /// <summary>
         ///     Gets the model.
         /// </summary>
-        public ApplicationModel Model
+        public IApplicationModel Model
         {
             get
             {
@@ -108,6 +130,27 @@ namespace Akvelon.Calendar.ViewModels
             {
                 this.model = value;
                 this.OnPropertyChanged("Model");
+            }
+        }
+
+        /// <summary>
+        /// Gets the next view command.
+        /// </summary>
+        public Command NextViewCommand
+        {
+            get
+            {
+                return new Command(
+                    (data) =>
+                        {
+                            if (data is DateRepresentationType)
+                            {
+                                this.SelectedCase = new DateCase(this.viewModelManager.Create(
+                                    new DateInfoModel(DateTime.Now, (DateRepresentationType)data),
+                                    this.viewModelManager,
+                                    this.taskMediator.Tasks));
+                            }
+                        });
             }
         }
 
@@ -129,23 +172,17 @@ namespace Akvelon.Calendar.ViewModels
         }
 
         /// <summary>
-        /// The add date case.
+        /// The on new view model needed.
         /// </summary>
-        /// <param name="dateCase">
-        /// The date case.
+        /// <param name="sender">
+        /// The sender.
         /// </param>
-        private void AddDateCase(DateCaseVm dateCase)
+        /// <param name="newVm">
+        /// The new view model.
+        /// </param>
+        public void OnNewVm(IDateVm sender, DateVm newVm)
         {
-            this.DateCases.Add(dateCase);
-
-            dateCase.NewVmNeeded += (sender, newVm) =>
-                {
-                    if (this.CurrentDateCase == dateCase)
-                    {
-                        this.AddDateCase(new DateCaseVm(newVm, this.taskMediator));
-                    }
-                };
-            this.CurrentDateCase = dateCase;
+            this.SelectedCase = new DateCase((DateVm)sender);
         }
     }
 }

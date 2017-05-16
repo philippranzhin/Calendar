@@ -12,7 +12,6 @@ namespace Akvelon.Calendar.ViewModels
     using System;
     using System.Collections.ObjectModel;
     using System.Globalization;
-    using System.Linq;
 
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
     using Akvelon.Calendar.Infrastrucure.Extensions;
@@ -22,7 +21,7 @@ namespace Akvelon.Calendar.ViewModels
     /// <summary>
     ///     The month view model 
     /// </summary>
-    public class MonthVm : DateWithChildrenVm
+    public class MonthVm : DateVm
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MonthVm"/> class.
@@ -47,52 +46,51 @@ namespace Akvelon.Calendar.ViewModels
         /// <summary>
         ///     The name.
         /// </summary>
-        public override string Name => this.Date.Date.ToString("MMMM yyyy", CultureInfo.CurrentCulture);
-
-        /// <summary>
-        ///     Gets the user tasks.
-        /// </summary>
-        public override ReadOnlyObservableCollection<UserTaskModel> UserTasks
-        {
-            get
-            {
-                ObservableCollection<UserTaskModel> result = new ObservableCollection<UserTaskModel>(
-                    this.Tasks.Where(
-                        task => task.TaskDate.Year == this.Date.Date.Year
-                                && task.TaskDate.Month == this.Date.Date.Month));
-
-                return new ReadOnlyObservableCollection<UserTaskModel>(result);
-            }
-        }
+        public override string Name => this.DateInfo.Date.ToString("MMMM yyyy", CultureInfo.CurrentCulture);
 
         /// <summary>
         ///     The next date.
         /// </summary>
-        protected override DateInfoModel NextDate => new DateInfoModel(
-            this.Date.Date.AddMonths(+1),
-            DateInfoType.Month);
+        public override DateInfoModel NextDate => new DateInfoModel(
+            this.DateInfo.Date.AddMonths(+1),
+            DateRepresentationType.Month);
 
         /// <summary>
         ///     The previous date.
         /// </summary>
-        protected override DateInfoModel PreviousDate => new DateInfoModel(
-            this.Date.Date.AddMonths(-1),
-            DateInfoType.Month);
+        public override DateInfoModel PreviousDate => new DateInfoModel(
+            this.DateInfo.Date.AddMonths(-1),
+            DateRepresentationType.Month);
 
         /// <summary>
-        ///     The children filling.
+        /// The is date equal. Returns "true" if the Date property of current instance is equal to the date parameter
         /// </summary>
-        protected override void ChildrenFilling()
+        /// <param name="date">
+        /// The date.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public override bool IsDateEqual(DateTime date)
         {
-            DateTime currentDate = new DateTime(this.Date.Date.Year, this.Date.Date.Month, 1);
-            this.RegisterChild(new DateInfoModel(currentDate, DateInfoType.Week));
+            return this.DateInfo.Date.Year == date.Year && this.DateInfo.Date.Month == date.Month;
+        }
+
+        /// <summary>
+        /// A method that is called only once when the children property is called the first time. 
+        /// The parent class expects children to use the RegisterChild method in this method for each of their own children
+        /// </summary>
+        protected override void FillChildren()
+        {
+            DateTime currentDate = new DateTime(this.DateInfo.Date.Year, this.DateInfo.Date.Month, 1);
+            this.RegisterChild(new DateInfoModel(currentDate, DateRepresentationType.Week));
             currentDate = currentDate.AddDays(1);
 
-            while (!(currentDate.Month != this.Date.Date.Month && currentDate.IsFirstDayOfWeek()))
+            while (!(currentDate.Month != this.DateInfo.Date.Month && currentDate.IsFirstDayOfWeek()))
             {
                 if (currentDate.IsFirstDayOfWeek())
                 {
-                    this.RegisterChild(new DateInfoModel(currentDate, DateInfoType.Week));
+                    this.RegisterChild(new DateInfoModel(currentDate, DateRepresentationType.Week));
                 }
 
                 currentDate = currentDate.AddDays(1);

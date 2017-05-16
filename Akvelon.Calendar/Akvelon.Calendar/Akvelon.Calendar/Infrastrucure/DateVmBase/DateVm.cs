@@ -12,6 +12,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.Linq;
     using System.Runtime.CompilerServices;
 
     using Akvelon.Calendar.Infrastrucure.UserTasks;
@@ -25,10 +26,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
     /// </summary>
     public abstract class DateVm : IDateVm
     {
-        /// <summary>
-        ///     The date.
-        /// </summary>
-        protected readonly DateInfoModel Date;
+
 
         /// <summary>
         ///     The date view models manager.
@@ -39,6 +37,16 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         ///     The _tasks.
         /// </summary>
         protected readonly ReadOnlyObservableCollection<UserTaskModel> Tasks;
+
+        /// <summary>
+        ///     The date.
+        /// </summary>
+        private readonly DateInfoModel dateInfo;
+
+        /// <summary>
+        ///     The children.
+        /// </summary>
+        private ObservableCollection<DateVm> children;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DateVm"/> class.
@@ -57,7 +65,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
             IDateVmFactory factory,
             ReadOnlyObservableCollection<UserTaskModel> tasks)
         {
-            this.Date = dateInfo;
+            this.dateInfo = dateInfo;
             this.Tasks = tasks;
             this.Factory = factory;
             this.UpdateTasks();
@@ -90,19 +98,19 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         {
             get
             {
-                return new Command(() => { this.TaskAdded?.Invoke(this, new UserTaskModel(this.Date.Date)); });
+                return new Command(() => this.TaskAdded?.Invoke(this, new UserTaskModel(this.dateInfo.Date)));
             }
         }
 
         /// <summary>
         ///     The date info.
         /// </summary>
-        public DateInfoModel DateInfo => this.Date;
+        public DateInfoModel DateInfo => this.dateInfo;
 
         /// <summary>
         ///     The is current date.
         /// </summary>
-        public bool IsCurrentDate => this.DateInfo.Compare(DateTime.Now);
+        public bool IsCurrentDate => this.IsDateEqual(DateTime.Now);
 
         /// <summary>
         ///     Gets the name.
@@ -116,24 +124,50 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         {
             get
             {
-                return new Command(sender => { this.OnNewWmNeeded(this, sender as DateVm); });
+                return new Command(sender => this.OnNewWmNeeded(this, sender as DateVm));
             }
         }
 
         /// <summary>
         ///     Gets the user tasks.
         /// </summary>
-        public abstract ReadOnlyObservableCollection<UserTaskModel> UserTasks { get; }
+        public virtual ReadOnlyObservableCollection<UserTaskModel> UserTasks
+        {
+            get
+            {
+                ObservableCollection<UserTaskModel> result =
+                    new ObservableCollection<UserTaskModel>(this.Tasks.Where(task => this.IsDateEqual(task.Date)));
+
+                return new ReadOnlyObservableCollection<UserTaskModel>(result);
+            }
+        }
 
         /// <summary>
         ///     Gets the next date.
         /// </summary>
-        protected abstract DateInfoModel NextDate { get; }
+        public abstract DateInfoModel NextDate { get; }
 
         /// <summary>
         ///     Gets the previous date.
         /// </summary>
-        protected abstract DateInfoModel PreviousDate { get; }
+        public abstract DateInfoModel PreviousDate { get; }
+
+        /// <summary>
+        ///     Gets the children.
+        /// </summary>
+        public ReadOnlyObservableCollection<DateVm> Children
+        {
+            get
+            {
+                if (this.children == null)
+                {
+                    this.children = new ObservableCollection<DateVm>();
+                    this.FillChildren();
+                }
+
+                return new ReadOnlyObservableCollection<DateVm>(this.children);
+            }
+        }
 
         /// <summary>
         ///     The get next.
@@ -163,6 +197,62 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         public void UpdateTasks()
         {
             this.OnPropertyChanged("UserTasks");
+        }
+
+        /// <summary>
+        /// The is date equal. Returns "true" if the Date property of current instance is equal to the date parameter
+        /// </summary>
+        /// <param name="date">
+        /// The date.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public virtual bool IsDateEqual(DateInfoModel date)
+        {
+            return this.DateInfo.DateType == date.DateType && this.IsDateEqual(date.Date);
+        }
+
+        /// <summary>
+        /// The is date equal. Returns "true" if the Date property of current instance is equal to the date parameter
+        /// </summary>
+        /// <param name="date">
+        /// The date.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public abstract bool IsDateEqual(DateTime date);
+
+        /// <summary>
+        /// A method that is called only once when the children property is called the first time. 
+        /// The parent class expects children to use the RegisterChild method in this method for each of their own children
+        /// </summary>
+        protected abstract void FillChildren();
+
+        /// <summary>
+        /// The method, create or get from factory the DateVm by DateInfoModel and adds it in children collection.
+        /// Also subscribes to the events of the added element, reacting to them by throwing their own equivalent events.
+        /// </summary>
+        /// <param name="childDate">
+        /// The child date.
+        /// </param>
+        protected virtual void RegisterChild(DateInfoModel childDate)
+        {
+            DateVm child = this.Factory.Create(childDate, this.Factory, this.Tasks);
+            child.NewVmNeeded += this.OnNewWmNeeded;
+            child.TaskAdded += (sender, task) =>
+                {
+                    this.OnTaskAdded(this, task);
+                    this.OnTaskAdded(sender, task);
+                };
+            child.TaskRemoved += (sender, task) =>
+                {
+                    this.OnTaskRemoved(this, task);
+                    this.OnTaskRemoved(sender, task);
+                };
+            this.children.Add(child);
+            this.OnPropertyChanged("Children");
         }
 
         /// <summary>

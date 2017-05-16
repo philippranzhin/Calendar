@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DayVM.cs" company="Akvelon">
+// <copyright file="DayVm.cs" company="Akvelon">
 //   Philipp Ranzhin
 // </copyright>
 // <summary>
@@ -12,7 +12,6 @@ namespace Akvelon.Calendar.ViewModels
     using System;
     using System.Collections.ObjectModel;
     using System.Globalization;
-    using System.Linq;
 
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
     using Akvelon.Calendar.Infrastrucure.Extensions;
@@ -22,7 +21,7 @@ namespace Akvelon.Calendar.ViewModels
     /// <summary>
     ///     The day view model 
     /// </summary>
-    public class DayVm : DateWithChildrenVm
+    public class DayVm : DateVm
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DayVm"/> class.
@@ -47,45 +46,45 @@ namespace Akvelon.Calendar.ViewModels
         /// <summary>
         ///     The name.
         /// </summary>
-        public override string Name => this.Date.Date.ToString("dddd MMM yy", CultureInfo.CurrentCulture);
-
-        /// <summary>
-        ///     Gets the user tasks.
-        /// </summary>
-        public override ReadOnlyObservableCollection<UserTaskModel> UserTasks
-        {
-            get
-            {
-                ObservableCollection<UserTaskModel> result = new ObservableCollection<UserTaskModel>(
-                    this.Tasks.Where(
-                        task => task.TaskDate.Year == this.Date.Date.Year && task.TaskDate.Month == this.Date.Date.Month
-                                && task.TaskDate.Day == this.Date.Date.Day));
-
-                return new ReadOnlyObservableCollection<UserTaskModel>(result);
-            }
-        }
+        public override string Name => this.DateInfo.Date.ToString("yy-MMM-dd ddd", CultureInfo.CurrentCulture);
 
         /// <summary>
         ///     The next date.
         /// </summary>
-        protected override DateInfoModel NextDate => new DateInfoModel(this.Date.Date.AddDays(+1), DateInfoType.Day);
+        public override DateInfoModel NextDate => new DateInfoModel(this.DateInfo.Date.AddDays(+1), DateRepresentationType.Day);
 
         /// <summary>
         ///     The previous date.
         /// </summary>
-        protected override DateInfoModel PreviousDate => new DateInfoModel(
-            this.Date.Date.AddDays(-1),
-            DateInfoType.Day);
+        public override DateInfoModel PreviousDate => new DateInfoModel(
+            this.DateInfo.Date.AddDays(-1),
+            DateRepresentationType.Day);
 
         /// <summary>
-        ///     The children filling.
+        /// The is date equal. Returns "true" if the Date property of current instance is equal to the date parameter
         /// </summary>
-        protected override void ChildrenFilling()
+        /// <param name="date">
+        /// The date.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public override bool IsDateEqual(DateTime date)
         {
-            DateTime currentDate = new DateTime(this.Date.Date.Year, this.Date.Date.Month, this.Date.Date.Day, 1, 0, 0);
+            return this.DateInfo.Date.Year == date.Year && this.DateInfo.Date.Month == date.Month
+                   && this.DateInfo.Date.Day == date.Day;
+        }
+
+        /// <summary>
+        /// A method that is called only once when the children property is called the first time. 
+        /// The parent class expects children to use the RegisterChild method in this method for each of their own children
+        /// </summary>
+        protected override void FillChildren()
+        {
+            DateTime currentDate = new DateTime(this.DateInfo.Date.Year, this.DateInfo.Date.Month, this.DateInfo.Date.Day, 1, 0, 0);
             for (int i = 1; i <= DateTimeExtensions.HoursInDay; i++)
             {
-                this.RegisterChild(new DateInfoModel(currentDate, DateInfoType.Hour));
+                this.RegisterChild(new DateInfoModel(currentDate, DateRepresentationType.Hour));
                 currentDate = currentDate.AddHours(1);
             }
         }

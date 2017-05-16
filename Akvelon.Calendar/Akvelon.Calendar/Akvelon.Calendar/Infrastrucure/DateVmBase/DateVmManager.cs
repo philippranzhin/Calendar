@@ -56,7 +56,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// </returns>
         public DateVm GetOrCreate(DateInfoModel dateInfo)
         {
-            DateVm result = this.dateVmCollection.FirstOrDefault(dateVm => dateInfo.Compare(dateVm.DateInfo));
+            DateVm result = this.dateVmCollection.FirstOrDefault(dateVm => dateVm.IsDateEqual(dateInfo));
 
             if (result != null)
             {
@@ -65,31 +65,31 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
 
             switch (dateInfo.DateType)
             {
-                case DateInfoType.Year:
+                case DateRepresentationType.Year:
                     {
                         result = new YearVm(dateInfo, this, this.tasks);
                         break;
                     }
 
-                case DateInfoType.Month:
+                case DateRepresentationType.Month:
                     {
                         result = new MonthVm(dateInfo, this, this.tasks);
                         break;
                     }
 
-                case DateInfoType.Week:
+                case DateRepresentationType.Week:
                     {
                         result = new WeekVm(dateInfo, this, this.tasks);
                         break;
                     }
 
-                case DateInfoType.Day:
+                case DateRepresentationType.Day:
                     {
                         result = new DayVm(dateInfo, this, this.tasks);
                         break;
                     }
 
-                case DateInfoType.Hour:
+                case DateRepresentationType.Hour:
                     {
                         result = new HourVm(dateInfo, this, this.tasks);
                         break;

@@ -201,8 +201,7 @@ namespace Akvelon.Calendar.Views.MarkupExtensions.Behaviors
             EventInfo eventInfo = this.AssociatedObject.GetType().GetRuntimeEvent(name);
             if (eventInfo == null)
             {
-                throw new ArgumentException(
-                    string.Format("EventToCommandBehavior: Can't de-register the '{0}' event.", this.EventName));
+                throw new ArgumentException($"EventToCommandBehavior: Can't de-register the '{this.EventName}' event.");
             }
 
             eventInfo.RemoveEventHandler(this.AssociatedObject, this.eventHandler);
@@ -264,8 +263,7 @@ namespace Akvelon.Calendar.Views.MarkupExtensions.Behaviors
             EventInfo eventInfo = this.AssociatedObject.GetType().GetRuntimeEvent(name);
             if (eventInfo == null)
             {
-                throw new ArgumentException(
-                    string.Format("EventToCommandBehavior: Can't register the '{0}' event.", this.EventName));
+                throw new ArgumentException($"EventToCommandBehavior: Can't register the '{this.EventName}' event.");
             }
 
             MethodInfo methodInfo = typeof(EventToCommandBehavior).GetTypeInfo().GetDeclaredMethod("OnEvent");

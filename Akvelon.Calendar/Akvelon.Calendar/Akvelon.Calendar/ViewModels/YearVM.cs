@@ -12,17 +12,16 @@ namespace Akvelon.Calendar.ViewModels
     using System;
     using System.Collections.ObjectModel;
     using System.Globalization;
-    using System.Linq;
 
-    using Akvelon.Calendar.Infrastrucure.Extensions;
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
+    using Akvelon.Calendar.Infrastrucure.Extensions;
     using Akvelon.Calendar.Models;
     using Akvelon.Calendar.Models.Enums;
 
     /// <summary>
     ///     The year view model 
     /// </summary>
-    public class YearVm : DateWithChildrenVm
+    public class YearVm : DateVm
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="YearVm"/> class.
@@ -47,45 +46,45 @@ namespace Akvelon.Calendar.ViewModels
         /// <summary>
         ///     The name.
         /// </summary>
-        public override string Name => this.Date.Date.ToString("yyyy", CultureInfo.CurrentCulture);
+        public override string Name => this.DateInfo.Date.ToString("yyyy", CultureInfo.CurrentCulture);
 
-        /// <summary>
-        ///     Gets the user tasks.
-        /// </summary>
-        public override ReadOnlyObservableCollection<UserTaskModel> UserTasks
-        {
-            get
-            {
-                ObservableCollection<UserTaskModel> result = new ObservableCollection<UserTaskModel>(
-                    this.Tasks.Where(
-                        task => task.TaskDate.Year == this.Date.Date.Year
-                                && task.TaskDate.Month == this.Date.Date.Month));
-
-                return new ReadOnlyObservableCollection<UserTaskModel>(result);
-            }
-        }
 
         /// <summary>
         ///     The next date.
         /// </summary>
-        protected override DateInfoModel NextDate => new DateInfoModel(this.Date.Date.AddYears(+1), DateInfoType.Year);
+        public override DateInfoModel NextDate => new DateInfoModel(this.DateInfo.Date.AddYears(+1), DateRepresentationType.Year);
 
         /// <summary>
         ///     The previous date.
         /// </summary>
-        protected override DateInfoModel PreviousDate => new DateInfoModel(
-            this.Date.Date.AddYears(-1),
-            DateInfoType.Year);
+        public override DateInfoModel PreviousDate => new DateInfoModel(
+            this.DateInfo.Date.AddYears(-1),
+            DateRepresentationType.Year);
 
         /// <summary>
-        ///     The children filling.
+        /// The is date equal. Returns "true" if the Date property of current instance is equal to the date parameter
         /// </summary>
-        protected override void ChildrenFilling()
+        /// <param name="date">
+        /// The date.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public override bool IsDateEqual(DateTime date)
+        {
+            return this.DateInfo.Date.Year == date.Year;
+        }
+
+        /// <summary>
+        /// A method that is called only once when the children property is called the first time. 
+        /// The parent class expects children to use the RegisterChild method in this method for each of their own children
+        /// </summary>
+        protected override void FillChildren()
         {
             for (int i = 1; i <= DateTimeExtensions.MonthsInYear; i++)
             {
-                DateTime currentDate = new DateTime(this.Date.Date.Year, i, 1);
-                this.RegisterChild(new DateInfoModel(currentDate, DateInfoType.Month));
+                DateTime currentDate = new DateTime(this.DateInfo.Date.Year, i, 1);
+                this.RegisterChild(new DateInfoModel(currentDate, DateRepresentationType.Month));
             }
         }
     }

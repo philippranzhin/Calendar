@@ -12,17 +12,18 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
 
+    using Akvelon.Calendar.Infrastrucure.DateVmBase;
     using Akvelon.Calendar.Models;
 
     /// <summary>
     /// The user task mediator. Is a mediator between UserTaskManager and the collection of IUserTaskChanged.
     /// </summary>
-    public class UserTaskMediator
+    public class UserTaskMediator : IUserTaskMediator
     {
         /// <summary>
         ///     The user task manager.
         /// </summary>
-        private readonly UserTaskManager userTaskManager;
+        private readonly ITaskManager userTaskManager;
 
         /// <summary>
         ///     The task clients.
@@ -37,12 +38,15 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
         /// <summary>
         /// Initializes a new instance of the <see cref="UserTaskMediator"/> class.
         /// </summary>
+        /// <param name="manager">
+        /// The manager.
+        /// </param>
         /// <param name="taskClients">
         /// The task clients.
         /// </param>
-        public UserTaskMediator(List<IUserTaskChanged> taskClients = null)
+        public UserTaskMediator(ITaskManager manager, List<DateVm> taskClients = null)
         {
-            this.userTaskManager = new UserTaskManager();
+            this.userTaskManager = manager;
             taskClients?.ForEach(this.AddClient);
         }
 
@@ -122,7 +126,7 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
                 this.userTaskManager.Tasks.Add(task);
             }
 
-            sender.UpdateTasks();
+            sender.UpdateTasks();           
         }
 
         /// <summary>

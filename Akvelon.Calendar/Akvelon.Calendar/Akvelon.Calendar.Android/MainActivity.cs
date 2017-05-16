@@ -9,9 +9,14 @@
 
 namespace Akvelon.Calendar.Droid
 {
+    using Akvelon.Calendar.Models.Enums;
+    using Akvelon.Calendar.Models.Interfaces;
+
     using Android.App;
     using Android.Content.PM;
     using Android.OS;
+
+    using TinyIoC;
 
     using Xamarin.Forms;
     using Xamarin.Forms.Platform.Android;
@@ -38,10 +43,16 @@ namespace Akvelon.Calendar.Droid
             FormsAppCompatActivity.TabLayoutResource = Resource.Layout.Tabbar;
             FormsAppCompatActivity.ToolbarResource = Resource.Layout.Toolbar;
 
+
             base.OnCreate(bundle);
 
             Forms.Init(this, bundle);
-            this.LoadApplication(new App());
+
+            AppInjection.Register("Calendar", DateRepresentationType.Year);
+
+            IApplicationModel implementation = TinyIoCContainer.Current.Resolve<IApplicationModel>();
+
+            this.LoadApplication(new App(implementation));
         }
     }
 }

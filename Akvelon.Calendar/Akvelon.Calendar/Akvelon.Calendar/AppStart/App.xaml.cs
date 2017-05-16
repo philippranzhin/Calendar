@@ -9,8 +9,7 @@
 
 namespace Akvelon.Calendar
 {
-    using Akvelon.Calendar.Models;
-    using Akvelon.Calendar.Models.Enums;
+    using Akvelon.Calendar.Models.Interfaces;
     using Akvelon.Calendar.ViewModels;
     using Akvelon.Calendar.Views;
 
@@ -22,17 +21,31 @@ namespace Akvelon.Calendar
     public partial class App : Application
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="App" /> class.
+        /// Initializes a new instance of the <see cref="App"/> class.
         /// </summary>
-        public App()
+        /// <param name="model">
+        /// The model.
+        /// </param>
+        public App(IApplicationModel model)
         {
             this.InitializeComponent();
 
-            ApplicationModel model = new ApplicationModel { Name = "Calendar" };
-            ApplicationVm viewModel = new ApplicationVm(model, DateInfoType.Year);
-            ApplicationView view = new ApplicationView { BindingContext = viewModel };
+            ApplicationVm viewModel = new ApplicationVm(model);
 
-            this.MainPage = view;
+            NavigationPage navigationPage = new NavigationPage();
+
+            this.MainPage = navigationPage;
+
+            MasterDetailPage master = new MasterDetailPage()
+            {
+                Master = new SettingsView() { BindingContext = viewModel },
+                Detail = new DateView() { BindingContext = viewModel }
+            };
+
+            master.SetBinding(Page.TitleProperty, "Title");
+            master.BindingContext = master.Detail;
+
+            navigationPage.PushAsync(master);
         }
 
         /// <summary>

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DateInfoType.cs" company="Akvelon">
+// <copyright file="DateRepresentationType.cs" company="Akvelon">
 //   Philipp Ranzhin
 // </copyright>
 // <summary>
@@ -10,9 +10,9 @@
 namespace Akvelon.Calendar.Models.Enums
 {
     /// <summary>
-    ///     The date info type.
+    ///     The date info type. Base enum to identify the date type
     /// </summary>
-    public enum DateInfoType
+    public enum DateRepresentationType
     {
         /// <summary>
         ///     The year.
