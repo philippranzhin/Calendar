@@ -26,16 +26,6 @@ namespace Akvelon.Calendar.ViewModels
     public class ApplicationVm : MvvmBase
     {
         /// <summary>
-        ///     The task Mediator.
-        /// </summary>
-        private readonly IUserTaskMediator taskMediator;
-
-        /// <summary>
-        /// The view model manager.
-        /// </summary>
-        private readonly IDateVmFactory viewModelManager;
-
-        /// <summary>
         ///     The model.
         /// </summary>
         private IApplicationModel model;
@@ -59,12 +49,10 @@ namespace Akvelon.Calendar.ViewModels
         /// </param>
         public ApplicationVm(IApplicationModel model)
         {
-            this.Model = model;
-            this.taskMediator = this.Model.TaskMediator;
-            this.viewModelManager = this.Model.Factory;
+            this.Model = model; 
             DateInfoModel currentDate = new DateInfoModel(DateTime.Now, this.Model.StartDateType);
 
-            this.SelectedCase = new DateCase(this.viewModelManager.Create(currentDate, this.viewModelManager, this.taskMediator.Tasks));
+            this.SelectedCase = new DateCase(this.Model.Factory.Create(currentDate, this.Model.Factory, this.Model.TaskMediator.Tasks));
         }
 
         /// <summary>
@@ -105,11 +93,11 @@ namespace Akvelon.Calendar.ViewModels
                 if (this.selectedCase != null)
                 {
                     this.selectedCase.NewVmNeeded -= this.OnNewVm;
-                    this.taskMediator.RemoveClient(this.selectedCase);
+                    this.Model.TaskMediator.RemoveClient(this.selectedCase);
                 }
 
                 value.NewVmNeeded += this.OnNewVm;
-                this.taskMediator.AddClient(value);
+                this.Model.TaskMediator.AddClient(value);
 
                 this.selectedCase = value;
                 this.OnPropertyChanged();          
@@ -145,10 +133,10 @@ namespace Akvelon.Calendar.ViewModels
                         {
                             if (data is DateRepresentationType)
                             {
-                                this.SelectedCase = new DateCase(this.viewModelManager.Create(
+                                this.SelectedCase = new DateCase(this.Model.Factory.Create(
                                     new DateInfoModel(DateTime.Now, (DateRepresentationType)data),
-                                    this.viewModelManager,
-                                    this.taskMediator.Tasks));
+                                    this.Model.Factory,
+                                    this.Model.TaskMediator.Tasks));
                             }
                         });
             }

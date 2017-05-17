@@ -39,11 +39,6 @@ namespace Akvelon.Calendar.ViewModels
         /// The selected child.
         /// </summary>
         private DateVm selectedChild;
-
-        /// <summary>
-        /// The selected item to be set by the calling code. This field is required to resolve conflicts with the view.
-        /// </summary>
-        private DateVm settedChild;
        
         /// <summary>
         /// Initializes a new instance of the <see cref="DateCase"/> class.
@@ -55,7 +50,6 @@ namespace Akvelon.Calendar.ViewModels
         {
             this.Children = new ObservableCollection<DateVm> { selectedChild };
             this.SelectedChild = selectedChild;
-            this.settedChild = selectedChild;
         }
 
         /// <summary>
@@ -102,22 +96,11 @@ namespace Akvelon.Calendar.ViewModels
         {
             get
             {
-                if (this.settedChild != null)
-                {
-                    return this.settedChild;
-                }
-
                 return this.selectedChild;
             }
 
             set
             {
-
-                if (this.settedChild != null && value != this.settedChild)
-                {
-                    this.settedChild = null;
-                    return;
-                }
                 if (this.selectedChild != null)
                 {
                     this.selectedChild.NewVmNeeded -= this.OnNewWmNeeded;
@@ -219,7 +202,6 @@ namespace Akvelon.Calendar.ViewModels
                             this.Children.Insert(0, this.SelectedChild.GetPrevious());
                         });
             }
-        }
-     
+        }     
     }
 }

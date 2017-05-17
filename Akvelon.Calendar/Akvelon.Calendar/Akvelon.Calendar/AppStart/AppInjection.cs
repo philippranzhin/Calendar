@@ -7,6 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+//todo this class not complited
 namespace Akvelon.Calendar
 {
     using System.Collections.Generic;
@@ -46,7 +47,7 @@ namespace Akvelon.Calendar
 
             container.Register<IDateVmFactory>(new DateVmManager(container.Resolve<IUserTaskMediator>().Tasks));
 
-            TinyIoCContainer.Current.Register<IApplicationModel>(new ApplicationModel(appName,container.Resolve<IDateVmFactory>(), container.Resolve<IUserTaskMediator>(), type));
+            container.Register<IApplicationModel>(new ApplicationModel(appName, container.Resolve<IDateVmFactory>(), container.Resolve<IUserTaskMediator>(), type));
         }     
     }
 }

@@ -15,7 +15,8 @@
         <ResourceDictionary>
             <DataTemplate x:Key="YearTemplate">
                 <ContentPage Title="{Binding Name}">
-                    <ListView ItemsSource="{Binding Children}">
+                    <ListView ItemsSource="{Binding Children}"
+                               >
                             <ListView.Header>
                                 <StackLayout  Orientation="Horizontal" HorizontalOptions="Center">
                                     <Label Text="{Binding Name}" 
@@ -31,7 +32,8 @@
                                             <Button Text="->"                                                    
                                                     Command="{Binding NextViewCommand}" 
                                                     HorizontalOptions="Start"
-                                                    VerticalOptions="Center">
+                                                    VerticalOptions="Center"
+                                                  >
                                             </Button>
                                             <Label HorizontalOptions="FillAndExpand"
                                                    Text="{Binding Name}"

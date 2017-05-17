@@ -47,7 +47,7 @@ namespace Akvelon.Calendar.ViewModels
         ///     The name.
         /// </summary>
         public override string Name => this.DateInfo.Date.ToString("MMMM yyyy", CultureInfo.CurrentCulture);
-
+        
         /// <summary>
         ///     The next date.
         /// </summary>
