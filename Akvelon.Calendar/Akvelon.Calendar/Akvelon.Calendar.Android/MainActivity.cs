@@ -1,27 +1,58 @@
-﻿using System;
-
-using Android.App;
-using Android.Content.PM;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Android.OS;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MainActivity.cs" company="Akvelon">
+//   Philipp Ranzhin
+// </copyright>
+// <summary>
+//   The main activity of android application
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Akvelon.Calendar.Droid
 {
-	[Activity (Label = "Akvelon.Calendar", Icon = "@drawable/icon", Theme="@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
-	{
-		protected override void OnCreate (Bundle bundle)
-		{
-			TabLayoutResource = Resource.Layout.Tabbar;
-			ToolbarResource = Resource.Layout.Toolbar; 
+    using Akvelon.Calendar.Models.Enums;
+    using Akvelon.Calendar.Models.Interfaces;
 
-			base.OnCreate (bundle);
+    using Android.App;
+    using Android.Content.PM;
+    using Android.OS;
 
-			global::Xamarin.Forms.Forms.Init (this, bundle);
-			LoadApplication (new Akvelon.Calendar.App ());
-		}
-	}
+    using TinyIoC;
+
+    using Xamarin.Forms;
+    using Xamarin.Forms.Platform.Android;
+
+    /// <summary>
+    ///     The main activity.
+    /// </summary>
+    [Activity(
+        Label = "Akvelon.Calendar",
+        Icon = "@drawable/icon",
+        Theme = "@style/MainTheme",
+        MainLauncher = true,
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    public class MainActivity : FormsAppCompatActivity
+    {
+        /// <summary>
+        /// The on create.
+        /// </summary>
+        /// <param name="bundle">
+        /// The bundle.
+        /// </param>
+        protected override void OnCreate(Bundle bundle)
+        {
+            FormsAppCompatActivity.TabLayoutResource = Resource.Layout.Tabbar;
+            FormsAppCompatActivity.ToolbarResource = Resource.Layout.Toolbar;
+
+
+            base.OnCreate(bundle);
+
+            Forms.Init(this, bundle);
+
+            AppInjection.Register("Calendar", DateRepresentationType.Day);
+
+            IApplicationModel implementation = TinyIoCContainer.Current.Resolve<IApplicationModel>();
+
+            this.LoadApplication(new App(implementation));
+        }
+    }
 }
-

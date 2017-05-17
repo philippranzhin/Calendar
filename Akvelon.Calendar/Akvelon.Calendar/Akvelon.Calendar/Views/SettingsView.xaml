@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:enums="clr-namespace:Akvelon.Calendar.Models.Enums;assembly=Akvelon.Calendar.Android"
+             x:Class="Akvelon.Calendar.Views.SettingsView"
+             x:Name="SettingsPage"
+             Title="Settings"
+             BindingContext="{Binding ViewModel, Source={x:Reference SettingsPage}}">
+    <!--TODO make this-->
+    <TableView>
+        <TableRoot>
+            <TableSection Title="YearView">
+                <ViewCell >
+                    <Button Text="Year" Command="{Binding NextViewCommand}" CommandParameter="{enums:DateRepresentationType Year}"></Button>
+                </ViewCell>
+            </TableSection>
+            <TableSection Title="MonthView">
+                <ViewCell >
+                    <Button Text="Month" Command="{Binding NextViewCommand}" CommandParameter="{enums:DateRepresentationType Month}"></Button>
+                </ViewCell>
+            </TableSection>
+            <TableSection Title="WeekView">
+                <ViewCell >
+                    <Button Text="Week" Command="{Binding NextViewCommand}" CommandParameter="{enums:DateRepresentationType Week}"></Button>
+                </ViewCell>
+            </TableSection>
+            <TableSection Title="DayView">
+                <ViewCell >
+                    <Button Text="Day" Command="{Binding NextViewCommand}" CommandParameter="{enums:DateRepresentationType Day}"></Button>
+                </ViewCell>
+            </TableSection>
+        </TableRoot>
+    </TableView>
+</ContentPage>

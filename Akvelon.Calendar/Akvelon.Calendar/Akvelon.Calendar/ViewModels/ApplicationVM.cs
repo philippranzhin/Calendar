@@ -1,49 +1,176 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Akvelon.Calendar.Models;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ApplicationVm.cs" company="Akvelon">
+//   Philipp Ranzhin
+// </copyright>
+// <summary>
+//   The application view model 
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Akvelon.Calendar.ViewModels
 {
-    public class ApplicationVM:ViewModelBase
+    using System;
+    using System.Collections.ObjectModel;
+
+    using Akvelon.Calendar.Infrastrucure.DateVmBase;
+    using Akvelon.Calendar.Infrastrucure.UserTasks;
+    using Akvelon.Calendar.Models;
+    using Akvelon.Calendar.Models.Enums;
+    using Akvelon.Calendar.Models.Interfaces;
+
+    using Xamarin.Forms;
+
+    /// <summary>
+    ///     The application view model. Provides a collection of DateCase, selected DateCase.
+    /// </summary>
+    public class ApplicationVm : MvvmBase
     {
-        #region fields
+        /// <summary>
+        ///     The model.
+        /// </summary>
+        private IApplicationModel model;
 
-        private ApplicationModel _model;        
+        /// <summary>
+        /// The children.
+        /// This property is not needed now, but later it should be an important part of the navigation
+        /// </summary>
+        private ObservableCollection<DateCase> cases;
 
-        #endregion
+        /// <summary>
+        /// The current child.
+        /// </summary>
+        private DateCase selectedCase;
 
-        #region constructor
-
-        public ApplicationVM(ApplicationModel model)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ApplicationVm"/> class.
+        /// </summary>
+        /// <param name="model">
+        /// The base application model.
+        /// </param>
+        public ApplicationVm(IApplicationModel model)
         {
-            _model = model;
+            this.Model = model; 
+            DateInfoModel currentDate = new DateInfoModel(DateTime.Now, this.Model.StartDateType);
+
+            this.SelectedCase = new DateCase(this.Model.Factory.Create(currentDate, this.Model.Factory, this.Model.TaskMediator.Tasks));
         }
 
-        #endregion
+        /// <summary>
+        /// The title.
+        /// </summary>
+        public string Title => this.SelectedCase.SelectedChild.DateInfo.DateType.ToString();
 
-        #region Properties
 
-        public ApplicationModel Model
+        /// <summary>
+        /// Gets or sets the children.
+        /// </summary>
+        public ObservableCollection<DateCase> Cases
         {
-            get { return _model; }
-            private set
+            get
             {
-                _model = value;
-                OnPropertyChanged("Model");
+                return this.cases;
+            }
+
+            set
+            {
+                this.cases = value;
+                this.OnPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// Gets or sets the selected child.
+        /// </summary>
+        public DateCase SelectedCase
+        {
+            get
+            {
+                return this.selectedCase;
+            }
+
+            set
+            {
+                if (this.selectedCase != null)
+                {
+                    this.selectedCase.NewVmNeeded -= this.OnNewVm;
+                    this.Model.TaskMediator.RemoveClient(this.selectedCase);
+                }
+
+                value.NewVmNeeded += this.OnNewVm;
+                this.Model.TaskMediator.AddClient(value);
+
+                this.selectedCase = value;
+                this.OnPropertyChanged();          
+            }
+        }
+
+        /// <summary>
+        ///     Gets the model.
+        /// </summary>
+        public IApplicationModel Model
+        {
+            get
+            {
+                return this.model;
+            }
+
+            private set
+            {
+                this.model = value;
+                this.OnPropertyChanged("Model");
+            }
+        }
+
+        /// <summary>
+        /// Gets the next view command.
+        /// </summary>
+        public Command NextViewCommand
+        {
+            get
+            {
+                return new Command(
+                    (data) =>
+                        {
+                            if (data is DateRepresentationType)
+                            {
+                                this.SelectedCase = new DateCase(this.Model.Factory.Create(
+                                    new DateInfoModel(DateTime.Now, (DateRepresentationType)data),
+                                    this.Model.Factory,
+                                    this.Model.TaskMediator.Tasks));
+                            }
+                        });
+            }
+        }
+
+        /// <summary>
+        ///     Gets the name.
+        /// </summary>
         public string Name
-        {
-            get { return Model.Name; }
+        { 
+            get
+            {
+                return this.Model.Name;
+            }
+
             private set
             {
-                Model.Name = value;
-                OnPropertyChanged();
+                this.Model.Name = value;
+                this.OnPropertyChanged("Name");
             }
         }
 
-        #endregion
+        /// <summary>
+        /// The on new view model needed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="newVm">
+        /// The new view model.
+        /// </param>
+        public void OnNewVm(IDateVm sender, DateVm newVm)
+        {
+            this.SelectedCase = new DateCase((DateVm)sender);
+        }
     }
 }
