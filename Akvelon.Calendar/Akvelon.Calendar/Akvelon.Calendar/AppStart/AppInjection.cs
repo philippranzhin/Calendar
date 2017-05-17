@@ -12,6 +12,8 @@ namespace Akvelon.Calendar
 {
     using System.Collections.Generic;
 
+    using Akvelon.Calendar.DataBase;
+    using Akvelon.Calendar.DataBase.Interfaces;
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
     using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
@@ -19,6 +21,8 @@ namespace Akvelon.Calendar
     using Akvelon.Calendar.Models.Interfaces;
 
     using TinyIoC;
+
+    using Xamarin.Forms;
 
     /// <summary>
     /// The application injection class.
@@ -41,7 +45,9 @@ namespace Akvelon.Calendar
         {
             TinyIoCContainer container = TinyIoCContainer.Current;
 
-            container.Register<ITaskManager>(new UserTaskManager(tasks));
+            container.Register<ITaskRepository>(new TaskRepository(DependencyService.Get<IFileHelper>()));
+
+            container.Register<ITaskManager>(new UserTaskManager(container.Resolve<ITaskRepository>()));
 
             container.Register<IUserTaskMediator>(new UserTaskMediator(container.Resolve<ITaskManager>()));
 

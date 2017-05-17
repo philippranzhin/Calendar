@@ -98,7 +98,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         {
             get
             {
-                return new Command(() => this.TaskAdded?.Invoke(this, new UserTaskModel(this.dateInfo.Date)));
+                return new Command((task) => this.TaskAdded?.Invoke(this, (UserTaskModel)task));
             }
         }
 
@@ -136,7 +136,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
             get
             {
                 ObservableCollection<UserTaskModel> result =
-                    new ObservableCollection<UserTaskModel>(this.Tasks.Where(task => this.IsDateEqual(task.Date)));
+                    new ObservableCollection<UserTaskModel>(this.Tasks.Where(task => this.IsDateEqual(task.Date) || this.IsDateEqual(task.EndDate)));
 
                 return new ReadOnlyObservableCollection<UserTaskModel>(result);
             }

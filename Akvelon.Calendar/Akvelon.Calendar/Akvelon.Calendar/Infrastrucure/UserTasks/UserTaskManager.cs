@@ -11,7 +11,9 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
 
+    using Akvelon.Calendar.DataBase.Interfaces;
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
     using Akvelon.Calendar.Models;
 
@@ -21,6 +23,11 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
     public class UserTaskManager : MvvmBase, ITaskManager
     {
         /// <summary>
+        /// The tasks repository.
+        /// </summary>
+        private readonly ITaskRepository repository;
+
+        /// <summary>
         ///     The tasks.
         /// </summary>
         private ObservableCollection<UserTaskModel> tasks;
@@ -28,12 +35,14 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
         /// <summary>
         /// Initializes a new instance of the <see cref="UserTaskManager"/> class.
         /// </summary>
-        /// <param name="tasks">
-        /// The tasks.
+        /// <param name="repository">
+        /// The repository.
         /// </param>
-        public UserTaskManager(List<UserTaskModel> tasks)
+        public UserTaskManager(ITaskRepository repository)
         {
-            this.tasks = tasks != null ? new ObservableCollection<UserTaskModel>(tasks) : new ObservableCollection<UserTaskModel>();
+            this.repository = repository;
+            this.Tasks = new ObservableCollection<UserTaskModel>(this.repository.GetItems());
+
         }
 
         /// <summary>
@@ -48,7 +57,7 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
 
             set
             {
-                this.tasks = value;
+                this.tasks = value;            
                 this.OnPropertyChanged("Tasks");
             }
         }

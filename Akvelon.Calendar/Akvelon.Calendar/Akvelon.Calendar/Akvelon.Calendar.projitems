@@ -13,6 +13,9 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)AppStart\AppInjection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataBase\Interfaces\IFileHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataBase\Interfaces\ITaskRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataBase\TaskRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateVmBase\DateVmManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateVmBase\IDateVmFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\Extensions\DateTimeExtensions.cs" />
