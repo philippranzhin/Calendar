@@ -58,5 +58,10 @@ namespace Akvelon.Calendar.DataBase.Interfaces
         /// The <see cref="int"/>.
         /// </returns>
         int RemoveItem(int id);
+
+        /// <summary>
+        /// Removes all items in database.
+        /// </summary>
+        void Clear();
     }
 }

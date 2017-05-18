@@ -11,6 +11,7 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Linq;
 
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
     using Akvelon.Calendar.Models;
@@ -31,11 +32,6 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
         private ObservableCollection<IUserTaskChanged> taskClients;
 
         /// <summary>
-        ///     The _user tasks.
-        /// </summary>
-        private ReadOnlyObservableCollection<UserTaskModel> tasks;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="UserTaskMediator"/> class.
         /// </summary>
         /// <param name="manager">
@@ -48,6 +44,7 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
         {
             this.userTaskManager = manager;
             taskClients?.ForEach(this.AddClient);
+
         }
 
         /// <summary>
@@ -62,8 +59,7 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
                     return null;
                 }
 
-                this.tasks = new ReadOnlyObservableCollection<UserTaskModel>(this.userTaskManager.Tasks);
-                return this.tasks;
+               return new ReadOnlyObservableCollection<UserTaskModel>(this.userTaskManager.Tasks);
             }
         }
 

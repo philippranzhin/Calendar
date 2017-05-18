@@ -98,7 +98,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         {
             get
             {
-                return new Command((task) => this.TaskAdded?.Invoke(this, (UserTaskModel)task));
+                return new Command((task) => this.TaskAdded?.Invoke(this, (UserTaskModel)task));             
             }
         }
 

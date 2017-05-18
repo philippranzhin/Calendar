@@ -42,7 +42,6 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
         {
             this.repository = repository;
             this.Tasks = new ObservableCollection<UserTaskModel>(this.repository.GetItems());
-
         }
 
         /// <summary>
@@ -57,8 +56,38 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
 
             set
             {
-                this.tasks = value;            
+                this.tasks = value;
+
+                this.Tasks.CollectionChanged += (collection, arguments) => this.SyncChanges(arguments);
+
                 this.OnPropertyChanged("Tasks");
+            }
+        }
+
+        /// <summary>
+        /// Synchronizes changes in the collection of tasks with a table in the database
+        /// </summary>
+        /// <param name="arguments">
+        /// The arguments.
+        /// </param>
+        private void SyncChanges(NotifyCollectionChangedEventArgs arguments)
+        {
+            switch (arguments.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (UserTaskModel newTask in arguments.NewItems)
+                    {
+                        newTask.Id = this.repository.SaveItem(newTask);
+                    }
+
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (UserTaskModel removedTask in arguments.OldItems)
+                    {
+                        this.repository.RemoveItem(removedTask.Id);
+                    }
+
+                    break;
             }
         }
     }

@@ -30,7 +30,6 @@ namespace Akvelon.Calendar
     public class AppInjection
     {
         /// <summary>
-        /// The register. Create the all input instances for application
         /// </summary>
         /// <param name="appName">
         /// The app name.
@@ -38,22 +37,20 @@ namespace Akvelon.Calendar
         /// <param name="type">
         /// The type.
         /// </param>
-        /// <param name="tasks">
-        /// The tasks.
-        /// </param>
-        public static void Register(string appName, DateRepresentationType type, List<UserTaskModel> tasks = null)
+        public static void Register(string appName, DateRepresentationType type)
         {
             TinyIoCContainer container = TinyIoCContainer.Current;
 
-            container.Register<ITaskRepository>(new TaskRepository(DependencyService.Get<IFileHelper>()));
+            container.Register<ITaskRepository>(new TaskRepository(DependencyService.Get<IFileHelper>(), appName.ToLower()));
 
-            container.Register<ITaskManager>(new UserTaskManager(container.Resolve<ITaskRepository>()));
+            container.Register<ITaskManager, UserTaskManager>();
 
-            container.Register<IUserTaskMediator>(new UserTaskMediator(container.Resolve<ITaskManager>()));
+            container.Register<IUserTaskMediator, UserTaskMediator>();
 
             container.Register<IDateVmFactory>(new DateVmManager(container.Resolve<IUserTaskMediator>().Tasks));
 
             container.Register<IApplicationModel>(new ApplicationModel(appName, container.Resolve<IDateVmFactory>(), container.Resolve<IUserTaskMediator>(), type));
+            
         }     
     }
 }

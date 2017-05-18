@@ -33,10 +33,13 @@ namespace Akvelon.Calendar.DataBase
         /// <param name="fileHelper">
         /// The file helper.
         /// </param>
-        public TaskRepository(IFileHelper fileHelper)
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        public TaskRepository(IFileHelper fileHelper, string fileName)
         {
             // todo get name from app model
-            this.database = new SQLiteConnection(fileHelper.GetDateBasePath("name"));
+            this.database = new SQLiteConnection(fileHelper.GetDateBasePath(fileName));
 
             this.database.CreateTable<UserTaskModel>();
         }
@@ -91,7 +94,15 @@ namespace Akvelon.Calendar.DataBase
         /// </returns>
         public int RemoveItem(int id)
         {
-            return this.database.Delete(id);
+            return this.database.Delete<UserTaskModel>(id);
+        }
+
+        /// <summary>
+        /// Removes all items in database.
+        /// </summary>
+        public void Clear()
+        {
+            this.database.DeleteAll<UserTaskModel>();
         }
     }
 }
