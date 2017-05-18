@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-//todo this class not complited
+// TODO this class not complited
 namespace Akvelon.Calendar
 {
     using System.Collections.Generic;
@@ -30,6 +30,7 @@ namespace Akvelon.Calendar
     public class AppInjection
     {
         /// <summary>
+        /// The get instance.
         /// </summary>
         /// <param name="appName">
         /// The app name.
@@ -37,9 +38,12 @@ namespace Akvelon.Calendar
         /// <param name="type">
         /// The type.
         /// </param>
-        public static void Register(string appName, DateRepresentationType type)
+        /// <returns>
+        /// The <see cref="App"/>.
+        /// </returns>
+        public static App GetInstance(string appName, DateRepresentationType type)
         {
-            TinyIoCContainer container = TinyIoCContainer.Current;
+            TinyIoCContainer container = new TinyIoCContainer();
 
             container.Register<ITaskRepository>(new TaskRepository(DependencyService.Get<IFileHelper>(), appName.ToLower()));
 
@@ -47,10 +51,11 @@ namespace Akvelon.Calendar
 
             container.Register<IUserTaskMediator, UserTaskMediator>();
 
-            container.Register<IDateVmFactory>(new DateVmManager(container.Resolve<IUserTaskMediator>().Tasks));
+            container.Register<IDateVmFactory, DateVmManager>();
 
-            container.Register<IApplicationModel>(new ApplicationModel(appName, container.Resolve<IDateVmFactory>(), container.Resolve<IUserTaskMediator>(), type));
+            container.Register<IApplicationModel>(new ApplicationModel(appName, container.Resolve<IDateVmFactory>(), container.Resolve<IUserTaskMediator>(), type));    
             
+            return new App(container.Resolve<IApplicationModel>());
         }     
     }
 }
