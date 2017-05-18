@@ -14,6 +14,7 @@ namespace Akvelon.Calendar.ViewModels
     using System.Globalization;
 
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
+    using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
     using Akvelon.Calendar.Models.Enums;
 
@@ -31,14 +32,14 @@ namespace Akvelon.Calendar.ViewModels
         /// <param name="factory">
         /// The factory.
         /// </param>
-        /// <param name="tasks">
-        /// The tasks.
+        /// <param name="taskMediator">
+        /// The task mediator.
         /// </param>
         public HourVm(
             DateInfoModel dateInfo,
             IDateVmFactory factory,
-            ReadOnlyObservableCollection<UserTaskModel> tasks)
-            : base(dateInfo, factory, tasks)
+            IUserTaskMediator taskMediator)
+            : base(dateInfo, factory, taskMediator)
         {
         }
 

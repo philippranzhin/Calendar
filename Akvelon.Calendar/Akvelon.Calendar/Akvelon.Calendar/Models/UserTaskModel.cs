@@ -11,19 +11,21 @@ namespace Akvelon.Calendar.Models
 {
     using System;
 
+    using Java.Security;
+
     using SQLite;
 
     /// <summary>
     ///     The user task model.
     /// </summary>
     [Table("UserTasks")]
-    public class UserTaskModel
+    public class UserTaskModel : ICloneable, IComparable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UserTaskModel"/> class.
         /// </summary>
         public UserTaskModel()
-        {            
+        {
         }
 
         /// <summary>
@@ -83,5 +85,46 @@ namespace Akvelon.Calendar.Models
         /// Gets or sets the end date.
         /// </summary>
         public DateTime EndDate { get; set; }
+
+        /// <summary>
+        /// Returns clone of this instance.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        public object Clone()
+        {
+            return new UserTaskModel(this.Date, this.Name, this.Description, this.Place, this.EndDate);
+        }
+
+        /// <summary>
+        /// The compare to.
+        /// </summary>
+        /// <param name="obj">
+        /// DateInfoModel comparing object.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        public int CompareTo(object obj)
+        {
+            UserTaskModel compModel = (UserTaskModel)obj;
+
+            if (compModel == null)
+            {
+                return -1;
+            }
+
+            if (this.Date == compModel.Date &&
+                this.Name == compModel.Name &&
+                this.Description == compModel.Description &&
+                this.Place == compModel.Place &&
+                this.EndDate == compModel.EndDate)
+            {
+                return 0;
+            }
+
+            return this.Date.CompareTo(compModel.Date);
+        }
     }
 }

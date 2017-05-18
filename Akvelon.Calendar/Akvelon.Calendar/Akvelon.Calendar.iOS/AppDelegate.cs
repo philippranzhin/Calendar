@@ -50,12 +50,8 @@ namespace Akvelon.Calendar.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             Forms.Init();
-
-            AppInjection.Register("Calendar", DateRepresentationType.Year);
-
-            IApplicationModel implementation = TinyIoCContainer.Current.Resolve<IApplicationModel>();
-
-            this.LoadApplication(new App(implementation));
+       
+            this.LoadApplication(AppInjection.GetInstance("Calendar_iOS", DateRepresentationType.Day));
 
             return base.FinishedLaunching(app, options);
         }

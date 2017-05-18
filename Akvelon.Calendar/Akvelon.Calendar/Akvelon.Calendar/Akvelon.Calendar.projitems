@@ -34,6 +34,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Enums\DateRepresentationType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IApplicationModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\UserTaskModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AddTaskVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ApplicationVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DateCase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DayVm.cs" />

@@ -48,11 +48,7 @@ namespace Akvelon.Calendar.Droid
 
             Forms.Init(this, bundle);
 
-            AppInjection.Register("Calendar", DateRepresentationType.Day);
-
-            IApplicationModel implementation = TinyIoCContainer.Current.Resolve<IApplicationModel>();
-
-            this.LoadApplication(new App(implementation));
+            this.LoadApplication(AppInjection.GetInstance("Calendar", DateRepresentationType.Day));
         }
     }
 }

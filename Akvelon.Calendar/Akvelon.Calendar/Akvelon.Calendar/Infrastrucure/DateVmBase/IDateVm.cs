@@ -20,5 +20,10 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         ///     The new view model needed.
         /// </summary>
         event DateVmHandler NewVmNeeded;
+
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
+        string Name { get; }
     }
 }

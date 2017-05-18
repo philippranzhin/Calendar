@@ -44,6 +44,11 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         private readonly DateInfoModel dateInfo;
 
         /// <summary>
+        /// The task mediator.
+        /// </summary>
+        private readonly IUserTaskMediator taskMediator;
+
+        /// <summary>
         ///     The children.
         /// </summary>
         private ObservableCollection<DateVm> children;
@@ -57,16 +62,17 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// <param name="factory">
         /// The factory.
         /// </param>
-        /// <param name="tasks">
-        /// The tasks.
+        /// <param name="taskMediator">
+        /// The task mediator.
         /// </param>
         protected DateVm(
             DateInfoModel dateInfo,
             IDateVmFactory factory,
-            ReadOnlyObservableCollection<UserTaskModel> tasks)
+            IUserTaskMediator taskMediator)
         {
             this.dateInfo = dateInfo;
-            this.Tasks = tasks;
+            this.taskMediator = taskMediator;
+            this.Tasks = this.taskMediator.Tasks;
             this.Factory = factory;
             this.UpdateTasks();
         }
@@ -98,7 +104,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         {
             get
             {
-                return new Command((task) => this.TaskAdded?.Invoke(this, (UserTaskModel)task));             
+                return new Command((task) => this.TaskAdded?.Invoke(this, (UserTaskModel)task));                          
             }
         }
 
@@ -177,7 +183,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// </returns>
         public virtual DateVm GetNext()
         {
-            return this.Factory.Create(this.NextDate, this.Factory, this.Tasks);
+            return this.Factory.Create(this.NextDate, this.Factory, this.taskMediator);
         }
 
         /// <summary>
@@ -188,7 +194,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// </returns>
         public virtual DateVm GetPrevious()
         {
-            return this.Factory.Create(this.PreviousDate, this.Factory, this.Tasks);
+            return this.Factory.Create(this.PreviousDate, this.Factory, this.taskMediator);
         }
 
         /// <summary>
@@ -239,7 +245,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// </param>
         protected virtual void RegisterChild(DateInfoModel childDate)
         {
-            DateVm child = this.Factory.Create(childDate, this.Factory, this.Tasks);
+            DateVm child = this.Factory.Create(childDate, this.Factory, this.taskMediator);
             child.NewVmNeeded += this.OnNewWmNeeded;
             child.TaskAdded += (sender, task) =>
                 {
