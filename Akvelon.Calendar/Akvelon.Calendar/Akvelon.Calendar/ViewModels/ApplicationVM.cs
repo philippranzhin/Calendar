@@ -13,7 +13,6 @@ namespace Akvelon.Calendar.ViewModels
     using System.Collections.ObjectModel;
 
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
-    using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
     using Akvelon.Calendar.Models.Enums;
     using Akvelon.Calendar.Models.Interfaces;
@@ -160,24 +159,14 @@ namespace Akvelon.Calendar.ViewModels
         }
 
         /// <summary>
-        /// The on new view model needed.
+        /// The on new view model.
         /// </summary>
-        /// <param name="sender">
-        /// The sender.
+        /// <param name="viewModel">
+        /// The view model.
         /// </param>
-        /// <param name="newVm">
-        /// The new view model.
-        /// </param>
-        public void OnNewVm(IDateVm sender, DateVm newVm)
+        public void OnNewVm(IDateVm viewModel)
         {
-            if (sender is DateVm)
-            {
-                this.SelectedCase = new DateCase((DateVm)sender);
-            }
-            else
-            {
-                this.SelectedCase = new DateCase(newVm);
-            }
+                this.SelectedCase = new DateCase((DateVm)viewModel);
         }
     }
 }

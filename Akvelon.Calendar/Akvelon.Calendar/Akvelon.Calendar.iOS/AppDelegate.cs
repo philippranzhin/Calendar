@@ -10,11 +10,8 @@
 namespace Akvelon.Calendar.iOS
 {
     using Akvelon.Calendar.Models.Enums;
-    using Akvelon.Calendar.Models.Interfaces;
 
     using Foundation;
-
-    using TinyIoC;
 
     using UIKit;
 

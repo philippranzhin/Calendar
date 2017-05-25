@@ -18,6 +18,8 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
     using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
 
+    using Database.DataBase.Models;
+
     using Xamarin.Forms;
 
     /// <summary>
@@ -104,7 +106,11 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         {
             get
             {
-                return new Command((task) => this.TaskAdded?.Invoke(this, (UserTaskModel)task));                          
+#if DEBUG
+                return new Command((task) => this.TaskAdded?.Invoke(this, new UserTaskModel() { Date = this.DateInfo.Date }));
+#else
+                return new Command((task) => this.TaskAdded?.Invoke(this, (UserTaskModel)task));
+#endif                     
             }
         }
 
@@ -130,7 +136,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         {
             get
             {
-                return new Command(sender => this.OnNewWmNeeded(this, sender as DateVm));
+                return new Command(() => this.OnNewVmNeeded(this));
             }
         }
 
@@ -246,7 +252,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         protected virtual void RegisterChild(DateInfoModel childDate)
         {
             DateVm child = this.Factory.Create(childDate, this.Factory, this.taskMediator);
-            child.NewVmNeeded += this.OnNewWmNeeded;
+            child.NewVmNeeded += this.OnNewVmNeeded;
             child.TaskAdded += (sender, task) =>
                 {
                     this.OnTaskAdded(this, task);
@@ -264,15 +270,12 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// <summary>
         /// The on new view model needed.
         /// </summary>
-        /// <param name="sender">
-        /// The sender.
+        /// <param name="viewModel">
+        /// The view model.
         /// </param>
-        /// <param name="newDateVm">
-        /// The new date view model.
-        /// </param>
-        protected virtual void OnNewWmNeeded(IDateVm sender, DateVm newDateVm)
+        protected virtual void OnNewVmNeeded(IDateVm viewModel)
         {
-            this.NewVmNeeded?.Invoke(sender, newDateVm);
+            this.NewVmNeeded?.Invoke(viewModel);
         }
 
         /// <summary>

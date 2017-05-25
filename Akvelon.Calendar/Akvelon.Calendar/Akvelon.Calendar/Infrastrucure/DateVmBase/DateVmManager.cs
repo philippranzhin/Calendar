@@ -18,6 +18,8 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
     using Akvelon.Calendar.Models.Enums;
     using Akvelon.Calendar.ViewModels;
 
+    using Database.DataBase.Models;
+
     /// <summary>
     /// Date model dispatcher. Describes objects that can manage the DateVm collection, 
     /// provide an interface for creating DateVm, 

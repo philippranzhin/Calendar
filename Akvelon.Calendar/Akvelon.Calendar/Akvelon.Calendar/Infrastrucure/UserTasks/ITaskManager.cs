@@ -11,10 +11,10 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
 {
     using System.Collections.ObjectModel;
 
-    using Akvelon.Calendar.Models;
+    using Database.DataBase.Models;
 
     /// <summary>
-    /// The TaskManager interface. Describes the objects, that can ceep collection of user task model
+    /// The TaskManager interface.
     /// </summary>
     public interface ITaskManager
     {

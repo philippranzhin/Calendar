@@ -11,10 +11,10 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Linq;
 
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
-    using Akvelon.Calendar.Models;
+
+    using Database.DataBase.Models;
 
     /// <summary>
     /// The user task mediator. Is a mediator between UserTaskManager and the collection of IUserTaskChanged.

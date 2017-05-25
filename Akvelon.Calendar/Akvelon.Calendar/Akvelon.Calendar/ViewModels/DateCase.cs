@@ -16,12 +16,13 @@ namespace Akvelon.Calendar.ViewModels
 
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
     using Akvelon.Calendar.Infrastrucure.UserTasks;
-    using Akvelon.Calendar.Models;
+
+    using Database.DataBase.Models;
 
     using Xamarin.Forms;
 
     /// <summary>
-    /// The date case. Describes objects that always contain three DateVm, and ensure that they have a common type
+    /// The date case. Describes objects that always contain three Date view model, and ensure that they have a common type
     /// </summary>
     public class DateCase : IDateVm
     {
@@ -103,11 +104,11 @@ namespace Akvelon.Calendar.ViewModels
             {
                 if (this.selectedChild != null)
                 {
-                    this.selectedChild.NewVmNeeded -= this.OnNewWmNeeded;
+                    this.selectedChild.NewVmNeeded -= this.OnNewVmNeeded;
                     this.selectedChild.TaskAdded -= this.OnTaskAdded;
                 }
 
-                value.NewVmNeeded += this.OnNewWmNeeded;
+                value.NewVmNeeded += this.OnNewVmNeeded;
                 value.TaskAdded += this.TaskAdded;
 
                 this.selectedChild = value;
@@ -147,15 +148,12 @@ namespace Akvelon.Calendar.ViewModels
         /// <summary>
         /// The on new view model needed.
         /// </summary>
-        /// <param name="sender">
-        /// The sender.
+        /// <param name="viewModel">
+        /// The view model.
         /// </param>
-        /// <param name="newDateVm">
-        /// The new date view model.
-        /// </param>
-        protected virtual void OnNewWmNeeded(IDateVm sender, DateVm newDateVm)
+        protected virtual void OnNewVmNeeded(IDateVm viewModel)
         {
-            this.NewVmNeeded?.Invoke(sender, newDateVm);
+            this.NewVmNeeded?.Invoke(viewModel);
         }
 
         /// <summary>

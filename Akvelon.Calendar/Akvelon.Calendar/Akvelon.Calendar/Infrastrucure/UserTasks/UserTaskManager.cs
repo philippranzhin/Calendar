@@ -9,13 +9,13 @@
 
 namespace Akvelon.Calendar.Infrastrucure.UserTasks
 {
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
 
-    using Akvelon.Calendar.DataBase.Interfaces;
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
-    using Akvelon.Calendar.Models;
+
+    using Database.DataBase.Interfaces;
+    using Database.DataBase.Models;
 
     /// <summary>
     ///     The user task manager. This class manage all user tasks in current instance of application

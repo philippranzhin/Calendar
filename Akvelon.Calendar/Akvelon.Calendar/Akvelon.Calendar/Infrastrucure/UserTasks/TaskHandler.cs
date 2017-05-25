@@ -10,7 +10,7 @@
 
 namespace Akvelon.Calendar.Infrastrucure.UserTasks
 {
-    using Akvelon.Calendar.Models;
+    using Database.DataBase.Models;
 
     /// <summary>
     ///     The task handler.

@@ -10,7 +10,6 @@
 namespace Akvelon.Calendar.ViewModels
 {
     using System;
-    using System.Collections.ObjectModel;
     using System.Globalization;
     using System.Linq;
 

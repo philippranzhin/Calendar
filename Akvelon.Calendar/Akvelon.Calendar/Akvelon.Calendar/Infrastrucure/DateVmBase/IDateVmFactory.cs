@@ -9,8 +9,6 @@
 
 namespace Akvelon.Calendar.Infrastrucure.DateVmBase
 {
-    using System.Collections.ObjectModel;
-
     using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
 

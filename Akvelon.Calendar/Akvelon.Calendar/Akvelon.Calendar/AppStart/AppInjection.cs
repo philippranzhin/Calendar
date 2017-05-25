@@ -10,15 +10,14 @@
 // TODO this class not complited
 namespace Akvelon.Calendar
 {
-    using System.Collections.Generic;
-
-    using Akvelon.Calendar.DataBase;
-    using Akvelon.Calendar.DataBase.Interfaces;
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
     using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
     using Akvelon.Calendar.Models.Enums;
     using Akvelon.Calendar.Models.Interfaces;
+
+    using Database.DataBase;
+    using Database.DataBase.Interfaces;
 
     using TinyIoC;
 

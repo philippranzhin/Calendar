@@ -18,7 +18,7 @@ namespace Akvelon.Calendar.Droid
     using System;
     using System.IO;
 
-    using Akvelon.Calendar.DataBase.Interfaces;
+    using Database.DataBase.Interfaces;
 
     /// <summary>
     /// The droid file helper.

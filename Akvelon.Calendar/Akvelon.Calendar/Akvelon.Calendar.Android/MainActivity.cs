@@ -10,13 +10,10 @@
 namespace Akvelon.Calendar.Droid
 {
     using Akvelon.Calendar.Models.Enums;
-    using Akvelon.Calendar.Models.Interfaces;
 
     using Android.App;
     using Android.Content.PM;
     using Android.OS;
-
-    using TinyIoC;
 
     using Xamarin.Forms;
     using Xamarin.Forms.Platform.Android;
@@ -48,7 +45,7 @@ namespace Akvelon.Calendar.Droid
 
             Forms.Init(this, bundle);
 
-            this.LoadApplication(AppInjection.GetInstance("Calendar", DateRepresentationType.Day));
+            this.LoadApplication(AppInjection.GetInstance("CalendarX", DateRepresentationType.Day));
         }
     }
 }

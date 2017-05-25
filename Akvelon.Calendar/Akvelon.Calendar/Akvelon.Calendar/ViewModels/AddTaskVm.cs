@@ -10,11 +10,12 @@
 namespace Akvelon.Calendar.ViewModels
 {
     using System;
-    using System.Linq;
 
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
     using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
+
+    using Database.DataBase.Models;
 
     using Xamarin.Forms;
 
@@ -54,16 +55,20 @@ namespace Akvelon.Calendar.ViewModels
         /// <param name="mediator">
         /// The mediator.
         /// </param>
+        /// <param name="factory">
+        /// The factory.
+        /// </param>
         /// <param name="task">
         /// The task.
         /// </param>
         /// <param name="dateInfo">
         /// The date info.
         /// </param>
-        public AddTaskVm(IUserTaskMediator mediator, UserTaskModel task, DateInfoModel dateInfo)
+        public AddTaskVm(IUserTaskMediator mediator, IDateVmFactory factory, UserTaskModel task, DateInfoModel dateInfo)
         {
             this.OldTask = task;
             this.taskMediator = mediator;
+            this.factory = factory;
             this.dateInfo = dateInfo;
         }
 
@@ -79,11 +84,12 @@ namespace Akvelon.Calendar.ViewModels
         /// <param name="dateInfo">
         /// The date info.
         /// </param>
-        public AddTaskVm(IUserTaskMediator mediator, IDateVmFactory factory ,DateInfoModel dateInfo)
+        public AddTaskVm(IUserTaskMediator mediator, IDateVmFactory factory, DateInfoModel dateInfo)
         {
             this.OldTask = new UserTaskModel() { Date = dateInfo.Date, EndDate = dateInfo.Date};
             this.taskMediator = mediator;
             this.factory = factory;
+            
             this.dateInfo = dateInfo;
         }
 
@@ -133,8 +139,8 @@ namespace Akvelon.Calendar.ViewModels
                 return new Command(
                     () =>
                         {
-                            this.TaskRemoved?.Invoke(this, this.OldTask);
-                            this.TaskAdded?.Invoke(this, this.NewTask);                            
+                            this.OnTaskRemoved(this, this.OldTask);
+                            this.OnTaskAdded(this, this.NewTask);                            
                         },
                     () => this.IsCanSave);
             }
@@ -148,6 +154,7 @@ namespace Akvelon.Calendar.ViewModels
             get
             {
                 return this.NewTask.Name;
+                
             }
 
             set
@@ -268,12 +275,54 @@ namespace Akvelon.Calendar.ViewModels
             if (this.taskMediator.Tasks.Contains(this.NewTask))
             {
                 this.NewVmNeeded?.Invoke(
-                    this,
                     this.factory.Create(
                     new DateInfoModel(this.newTask.Date, this.dateInfo.DateType),
                     this.factory,
                     this.taskMediator));
             }
+        }
+
+        /// <summary>
+        /// The on new wm needed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="newDateVm">
+        /// The new date vm.
+        /// </param>
+        protected virtual void OnNewWmNeeded(IDateVm sender)
+        {
+            this.NewVmNeeded?.Invoke(sender);
+        }
+
+
+        /// <summary>
+        /// The on task added.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="task">
+        /// The task.
+        /// </param>
+        protected virtual void OnTaskAdded(IUserTaskChanged sender, UserTaskModel task)
+        {
+            this.TaskAdded?.Invoke(sender, task);
+        }
+
+        /// <summary>
+        /// The on task removed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="task">
+        /// The task.
+        /// </param>
+        protected virtual void OnTaskRemoved(IUserTaskChanged sender, UserTaskModel task)
+        {
+            this.TaskRemoved?.Invoke(sender, task);
         }
     }
 }
