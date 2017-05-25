@@ -18,6 +18,8 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
     using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
 
+    using Database.DataBase.Models;
+
     using Xamarin.Forms;
 
     /// <summary>
@@ -44,6 +46,11 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         private readonly DateInfoModel dateInfo;
 
         /// <summary>
+        /// The task mediator.
+        /// </summary>
+        private readonly IUserTaskMediator taskMediator;
+
+        /// <summary>
         ///     The children.
         /// </summary>
         private ObservableCollection<DateVm> children;
@@ -57,16 +64,17 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// <param name="factory">
         /// The factory.
         /// </param>
-        /// <param name="tasks">
-        /// The tasks.
+        /// <param name="taskMediator">
+        /// The task mediator.
         /// </param>
         protected DateVm(
             DateInfoModel dateInfo,
             IDateVmFactory factory,
-            ReadOnlyObservableCollection<UserTaskModel> tasks)
+            IUserTaskMediator taskMediator)
         {
             this.dateInfo = dateInfo;
-            this.Tasks = tasks;
+            this.taskMediator = taskMediator;
+            this.Tasks = this.taskMediator.Tasks;
             this.Factory = factory;
             this.UpdateTasks();
         }
@@ -98,7 +106,11 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         {
             get
             {
-                return new Command(() => this.TaskAdded?.Invoke(this, new UserTaskModel(this.dateInfo.Date)));
+#if DEBUG
+                return new Command((task) => this.TaskAdded?.Invoke(this, new UserTaskModel() { Date = this.DateInfo.Date }));
+#else
+                return new Command((task) => this.TaskAdded?.Invoke(this, (UserTaskModel)task));
+#endif                     
             }
         }
 
@@ -124,7 +136,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         {
             get
             {
-                return new Command(sender => this.OnNewWmNeeded(this, sender as DateVm));
+                return new Command(() => this.OnNewVmNeeded(this));
             }
         }
 
@@ -136,7 +148,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
             get
             {
                 ObservableCollection<UserTaskModel> result =
-                    new ObservableCollection<UserTaskModel>(this.Tasks.Where(task => this.IsDateEqual(task.Date)));
+                    new ObservableCollection<UserTaskModel>(this.Tasks.Where(task => this.IsDateEqual(task.Date) || this.IsDateEqual(task.EndDate)));
 
                 return new ReadOnlyObservableCollection<UserTaskModel>(result);
             }
@@ -177,7 +189,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// </returns>
         public virtual DateVm GetNext()
         {
-            return this.Factory.Create(this.NextDate, this.Factory, this.Tasks);
+            return this.Factory.Create(this.NextDate, this.Factory, this.taskMediator);
         }
 
         /// <summary>
@@ -188,7 +200,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// </returns>
         public virtual DateVm GetPrevious()
         {
-            return this.Factory.Create(this.PreviousDate, this.Factory, this.Tasks);
+            return this.Factory.Create(this.PreviousDate, this.Factory, this.taskMediator);
         }
 
         /// <summary>
@@ -239,8 +251,8 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// </param>
         protected virtual void RegisterChild(DateInfoModel childDate)
         {
-            DateVm child = this.Factory.Create(childDate, this.Factory, this.Tasks);
-            child.NewVmNeeded += this.OnNewWmNeeded;
+            DateVm child = this.Factory.Create(childDate, this.Factory, this.taskMediator);
+            child.NewVmNeeded += this.OnNewVmNeeded;
             child.TaskAdded += (sender, task) =>
                 {
                     this.OnTaskAdded(this, task);
@@ -258,15 +270,12 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// <summary>
         /// The on new view model needed.
         /// </summary>
-        /// <param name="sender">
-        /// The sender.
+        /// <param name="viewModel">
+        /// The view model.
         /// </param>
-        /// <param name="newDateVm">
-        /// The new date view model.
-        /// </param>
-        protected virtual void OnNewWmNeeded(IDateVm sender, DateVm newDateVm)
+        protected virtual void OnNewVmNeeded(IDateVm viewModel)
         {
-            this.NewVmNeeded?.Invoke(sender, newDateVm);
+            this.NewVmNeeded?.Invoke(viewModel);
         }
 
         /// <summary>

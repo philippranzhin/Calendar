@@ -9,8 +9,7 @@
 
 namespace Akvelon.Calendar.Infrastrucure.DateVmBase
 {
-    using System.Collections.ObjectModel;
-
+    using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
 
     /// <summary>
@@ -27,12 +26,12 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// <param name="factory">
         /// The factory.
         /// </param>
-        /// <param name="tasks">
-        /// The tasks.
+        /// <param name="taskMediator">
+        /// The task mediator.
         /// </param>
         /// <returns>
         /// The <see cref="DateVm"/>.
         /// </returns>
-        DateVm Create(DateInfoModel dateInfo, IDateVmFactory factory, ReadOnlyObservableCollection<UserTaskModel> tasks);
+        DateVm Create(DateInfoModel dateInfo, IDateVmFactory factory, IUserTaskMediator taskMediator);
     }
 }

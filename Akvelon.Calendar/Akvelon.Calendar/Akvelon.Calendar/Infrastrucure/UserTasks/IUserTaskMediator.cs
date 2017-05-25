@@ -11,7 +11,7 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
 {
     using System.Collections.ObjectModel;
 
-    using Akvelon.Calendar.Models;
+    using Database.DataBase.Models;
 
     /// <summary>
     /// The UserTaskMediator interface. Describes objects, that can adds and removes the own clients, and provides ability to get the task collection.

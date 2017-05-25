@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Akvelon.Calendar.Views.AddTaskView"
+             x:Name="AddTaskPage"
+             BindingContext="{Binding ViewModel, Source={x:Reference AddTaskPage}}">
+    <StackLayout VerticalOptions="CenterAndExpand">
+        <Entry HorizontalOptions="Center"
+               VerticalOptions="Start"
+               Text="{Binding InputName}"
+               Placeholder="enter event name">
+        </Entry>
+        <DatePicker Date="{Binding InputDate}"></DatePicker>
+        <DatePicker Date="{Binding InputEndDate}"></DatePicker>
+        <Entry HorizontalOptions="Center"
+               VerticalOptions="Start"
+               Text="{Binding InputPlace}"
+               Placeholder="enter event location">
+        </Entry>
+        <Entry HorizontalOptions="Center"
+               VerticalOptions="Start"
+               Text="{Binding InputDescription}"
+               Placeholder="enter event description">
+        </Entry>
+        <Button VerticalOptions="End"
+                Command="{Binding SaveCommand}"></Button>
+    </StackLayout>
+</ContentPage>

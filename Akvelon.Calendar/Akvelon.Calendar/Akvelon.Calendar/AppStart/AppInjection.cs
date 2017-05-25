@@ -7,18 +7,21 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-//todo this class not complited
+// TODO this class not complited
 namespace Akvelon.Calendar
 {
-    using System.Collections.Generic;
-
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
     using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
     using Akvelon.Calendar.Models.Enums;
     using Akvelon.Calendar.Models.Interfaces;
 
+    using Database.DataBase;
+    using Database.DataBase.Interfaces;
+
     using TinyIoC;
+
+    using Xamarin.Forms;
 
     /// <summary>
     /// The application injection class.
@@ -26,7 +29,7 @@ namespace Akvelon.Calendar
     public class AppInjection
     {
         /// <summary>
-        /// The register. Create the all input instances for application
+        /// The get instance.
         /// </summary>
         /// <param name="appName">
         /// The app name.
@@ -34,20 +37,24 @@ namespace Akvelon.Calendar
         /// <param name="type">
         /// The type.
         /// </param>
-        /// <param name="tasks">
-        /// The tasks.
-        /// </param>
-        public static void Register(string appName, DateRepresentationType type, List<UserTaskModel> tasks = null)
+        /// <returns>
+        /// The <see cref="App"/>.
+        /// </returns>
+        public static App GetInstance(string appName, DateRepresentationType type)
         {
-            TinyIoCContainer container = TinyIoCContainer.Current;
+            TinyIoCContainer container = new TinyIoCContainer();
 
-            container.Register<ITaskManager>(new UserTaskManager(tasks));
+            container.Register<ITaskRepository>(new TaskRepository(DependencyService.Get<IFileHelper>(), appName.ToLower()));
 
-            container.Register<IUserTaskMediator>(new UserTaskMediator(container.Resolve<ITaskManager>()));
+            container.Register<ITaskManager, UserTaskManager>();
 
-            container.Register<IDateVmFactory>(new DateVmManager(container.Resolve<IUserTaskMediator>().Tasks));
+            container.Register<IUserTaskMediator, UserTaskMediator>();
 
-            container.Register<IApplicationModel>(new ApplicationModel(appName, container.Resolve<IDateVmFactory>(), container.Resolve<IUserTaskMediator>(), type));
+            container.Register<IDateVmFactory, DateVmManager>();
+
+            container.Register<IApplicationModel>(new ApplicationModel(appName, container.Resolve<IDateVmFactory>(), container.Resolve<IUserTaskMediator>(), type));    
+            
+            return new App(container.Resolve<IApplicationModel>());
         }     
     }
 }

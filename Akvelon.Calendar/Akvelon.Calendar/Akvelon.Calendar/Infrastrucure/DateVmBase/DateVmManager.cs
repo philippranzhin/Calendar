@@ -13,9 +13,12 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
     using System.Collections.ObjectModel;
     using System.Linq;
 
+    using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
     using Akvelon.Calendar.Models.Enums;
     using Akvelon.Calendar.ViewModels;
+
+    using Database.DataBase.Models;
 
     /// <summary>
     /// Date model dispatcher. Describes objects that can manage the DateVm collection, 
@@ -35,14 +38,19 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         private readonly ReadOnlyObservableCollection<UserTaskModel> tasks;
 
         /// <summary>
+        /// The task mediator.
+        /// </summary>
+        private readonly IUserTaskMediator taskMediator;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DateVmManager"/> class.
         /// </summary>
-        /// <param name="tasks">
-        /// The tasks.
+        /// <param name="taskMediator">
+        /// The task mediator.
         /// </param>
-        public DateVmManager(ReadOnlyObservableCollection<UserTaskModel> tasks)
+        public DateVmManager(IUserTaskMediator taskMediator)
         {
-            this.tasks = tasks;
+            this.taskMediator = taskMediator;
         }
 
         /// <summary>
@@ -67,31 +75,31 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
             {
                 case DateRepresentationType.Year:
                     {
-                        result = new YearVm(dateInfo, this, this.tasks);
+                        result = new YearVm(dateInfo, this, this.taskMediator);
                         break;
                     }
 
                 case DateRepresentationType.Month:
                     {
-                        result = new MonthVm(dateInfo, this, this.tasks);
+                        result = new MonthVm(dateInfo, this, this.taskMediator);
                         break;
                     }
 
                 case DateRepresentationType.Week:
                     {
-                        result = new WeekVm(dateInfo, this, this.tasks);
+                        result = new WeekVm(dateInfo, this, this.taskMediator);
                         break;
                     }
 
                 case DateRepresentationType.Day:
                     {
-                        result = new DayVm(dateInfo, this, this.tasks);
+                        result = new DayVm(dateInfo, this, this.taskMediator);
                         break;
                     }
 
                 case DateRepresentationType.Hour:
                     {
-                        result = new HourVm(dateInfo, this, this.tasks);
+                        result = new HourVm(dateInfo, this, this.taskMediator);
                         break;
                     }
 
@@ -114,13 +122,13 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// <param name="factory">
         /// The factory.
         /// </param>
-        /// <param name="tasks">
-        /// The tasks.
+        /// <param name="mediator">
+        /// The task mediator.
         /// </param>
         /// <returns>
         /// The <see cref="DateVm"/>.
         /// </returns>
-        public DateVm Create(DateInfoModel dateInfo, IDateVmFactory factory, ReadOnlyObservableCollection<UserTaskModel> tasks)
+        public DateVm Create(DateInfoModel dateInfo, IDateVmFactory factory, IUserTaskMediator mediator)
         {
             return this.GetOrCreate(dateInfo);
         }

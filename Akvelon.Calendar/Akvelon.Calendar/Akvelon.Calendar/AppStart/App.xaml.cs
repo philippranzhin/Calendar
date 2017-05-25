@@ -44,7 +44,6 @@ namespace Akvelon.Calendar
 
             master.SetBinding(Page.TitleProperty, "Title");
             master.BindingContext = master.Detail;
-
             navigationPage.PushAsync(master);
         }
 

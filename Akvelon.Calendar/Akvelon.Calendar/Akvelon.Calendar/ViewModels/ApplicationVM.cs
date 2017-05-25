@@ -13,7 +13,6 @@ namespace Akvelon.Calendar.ViewModels
     using System.Collections.ObjectModel;
 
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
-    using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
     using Akvelon.Calendar.Models.Enums;
     using Akvelon.Calendar.Models.Interfaces;
@@ -34,12 +33,12 @@ namespace Akvelon.Calendar.ViewModels
         /// The children.
         /// This property is not needed now, but later it should be an important part of the navigation
         /// </summary>
-        private ObservableCollection<DateCase> cases;
+        private ObservableCollection<IDateVm> cases;
 
         /// <summary>
         /// The current child.
         /// </summary>
-        private DateCase selectedCase;
+        private IDateVm selectedCase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationVm"/> class.
@@ -52,19 +51,19 @@ namespace Akvelon.Calendar.ViewModels
             this.Model = model; 
             DateInfoModel currentDate = new DateInfoModel(DateTime.Now, this.Model.StartDateType);
 
-            this.SelectedCase = new DateCase(this.Model.Factory.Create(currentDate, this.Model.Factory, this.Model.TaskMediator.Tasks));
+            this.SelectedCase = new DateCase(this.Model.Factory.Create(currentDate, this.Model.Factory, this.Model.TaskMediator));
         }
 
         /// <summary>
         /// The title.
         /// </summary>
-        public string Title => this.SelectedCase.SelectedChild.DateInfo.DateType.ToString();
+        public string Title => this.SelectedCase.Name;
 
 
         /// <summary>
         /// Gets or sets the children.
         /// </summary>
-        public ObservableCollection<DateCase> Cases
+        public ObservableCollection<IDateVm> Cases
         {
             get
             {
@@ -81,7 +80,7 @@ namespace Akvelon.Calendar.ViewModels
         /// <summary>
         /// Gets or sets the selected child.
         /// </summary>
-        public DateCase SelectedCase
+        public IDateVm SelectedCase
         {
             get
             {
@@ -136,7 +135,7 @@ namespace Akvelon.Calendar.ViewModels
                                 this.SelectedCase = new DateCase(this.Model.Factory.Create(
                                     new DateInfoModel(DateTime.Now, (DateRepresentationType)data),
                                     this.Model.Factory,
-                                    this.Model.TaskMediator.Tasks));
+                                    this.Model.TaskMediator));
                             }
                         });
             }
@@ -160,17 +159,14 @@ namespace Akvelon.Calendar.ViewModels
         }
 
         /// <summary>
-        /// The on new view model needed.
+        /// The on new view model.
         /// </summary>
-        /// <param name="sender">
-        /// The sender.
+        /// <param name="viewModel">
+        /// The view model.
         /// </param>
-        /// <param name="newVm">
-        /// The new view model.
-        /// </param>
-        public void OnNewVm(IDateVm sender, DateVm newVm)
+        public void OnNewVm(IDateVm viewModel)
         {
-            this.SelectedCase = new DateCase((DateVm)sender);
+                this.SelectedCase = new DateCase((DateVm)viewModel);
         }
     }
 }
