@@ -106,11 +106,11 @@ namespace Database.DataBase.Models
         /// </returns>
         public int CompareTo(object obj)
         {
-            UserTaskModel compModel = (UserTaskModel)obj;
+            UserTaskModel compModel = obj as UserTaskModel;
 
             if (compModel == null)
             {
-                return -1;
+                throw new ArgumentException("This method can to compare the UserTaskModel only");
             }
 
             if (this.Date == compModel.Date &&

@@ -3,7 +3,7 @@
 //   Philipp Ranzhin
 // </copyright>
 // <summary>
-//   The year view model 
+//  The year view model 
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ namespace Akvelon.Calendar.ViewModels
     using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
     using Akvelon.Calendar.Models.Enums;
-
+    
     /// <summary>
     ///     The year view model 
     /// </summary>

@@ -9,6 +9,8 @@
 
 namespace Akvelon.Calendar
 {
+    using System.Collections.Generic;
+
     using Akvelon.Calendar.Models.Interfaces;
     using Akvelon.Calendar.ViewModels;
     using Akvelon.Calendar.Views;
@@ -37,9 +39,9 @@ namespace Akvelon.Calendar
             this.MainPage = navigationPage;
 
             MasterDetailPage master = new MasterDetailPage()
-            {
-                Master = new SettingsView() { BindingContext = viewModel },
-                Detail = new DateView() { BindingContext = viewModel }
+                                          {
+                                              Master = new SettingsView() { BindingContext = viewModel },
+                                              Detail = new DateView() { BindingContext = viewModel }
             };
 
             master.SetBinding(Page.TitleProperty, "Title");
@@ -58,7 +60,7 @@ namespace Akvelon.Calendar
         ///     The on sleep.
         /// </summary>
         protected override void OnSleep()
-        { 
+        {
         }
 
         /// <summary>

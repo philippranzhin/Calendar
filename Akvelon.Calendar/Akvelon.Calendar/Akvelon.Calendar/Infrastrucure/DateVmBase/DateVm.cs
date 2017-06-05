@@ -17,6 +17,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
 
     using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
+    using Akvelon.Calendar.ViewModels;
 
     using Database.DataBase.Models;
 
@@ -24,21 +25,14 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
 
     /// <summary>
     ///     The date view model abstract class. 
-    /// Describes the objects, that can give the basic information about date, the interface add/remove tasks in date, the interface to get next/previous  DateVm.
+    /// Describes the objects, that can give the basic information about date, the interface add/remove tasks in date, the interface to get next/previous  date view model.
     /// </summary>
     public abstract class DateVm : IDateVm
     {
-
-
         /// <summary>
-        ///     The date view models manager.
+        /// The factory.
         /// </summary>
-        protected readonly IDateVmFactory Factory;
-
-        /// <summary>
-        ///     The _tasks.
-        /// </summary>
-        protected readonly ReadOnlyObservableCollection<UserTaskModel> Tasks;
+        private readonly IDateVmFactory factory;
 
         /// <summary>
         ///     The date.
@@ -49,6 +43,11 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// The task mediator.
         /// </summary>
         private readonly IUserTaskMediator taskMediator;
+
+        /// <summary>
+        /// The task view model.
+        /// </summary>
+        private IDateVm taskVm;
 
         /// <summary>
         ///     The children.
@@ -74,8 +73,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         {
             this.dateInfo = dateInfo;
             this.taskMediator = taskMediator;
-            this.Tasks = this.taskMediator.Tasks;
-            this.Factory = factory;
+            this.factory = factory;
             this.UpdateTasks();
         }
 
@@ -100,19 +98,65 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         public event TaskHandler TaskRemoved;
 
         /// <summary>
-        ///     Gets the add task command.
+        ///  Gets the add task command.
+        ///  Parameter must be of type "DateTime"
+        /// </summary>
+        public Command CancelTaskCommand
+        {
+            get
+            {
+                return new Command(() => this.TaskVm = null);
+            }
+        }
+
+        /// <summary>
+        ///  Gets the add task command.
+        ///  Parameter must be of type "DateTime"
         /// </summary>
         public Command AddTaskCommand
         {
             get
             {
-#if DEBUG
-                return new Command((task) => this.TaskAdded?.Invoke(this, new UserTaskModel() { Date = this.DateInfo.Date }));
-#else
-                return new Command((task) => this.TaskAdded?.Invoke(this, (UserTaskModel)task));
-#endif                     
+                return new Command((date) => this.TaskVm = new TaskVm(this.taskMediator, this.factory, this.DateInfo)
+                                                               {
+                                                                   InputDate = (DateTime)date,
+                                                                   InputEndDate = (DateTime)date
+                });
             }
         }
+
+        /// <summary>
+        /// Gets or sets the task view model.
+        /// </summary>
+        public IDateVm TaskVm
+        {
+            get
+            {
+                return this.taskVm;
+            }
+
+            set
+            {
+                this.taskVm = value;
+
+                if (value != null)
+                {
+                    this.taskVm.TaskAdded += (sender, task) =>
+                        {
+                            this.OnTaskAdded(this, task);
+                            this.TaskVm = null;
+                        };
+                }
+
+                this.OnPropertyChanged();
+                this.OnPropertyChanged("IsTaskAdding");
+            }
+        }
+
+        /// <summary>
+        /// The is task adding.
+        /// </summary>
+        public bool IsTaskAdding => this.TaskVm != null;
 
         /// <summary>
         ///     The date info.
@@ -123,6 +167,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         ///     The is current date.
         /// </summary>
         public bool IsCurrentDate => this.IsDateEqual(DateTime.Now);
+
 
         /// <summary>
         ///     Gets the name.
@@ -148,7 +193,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
             get
             {
                 ObservableCollection<UserTaskModel> result =
-                    new ObservableCollection<UserTaskModel>(this.Tasks.Where(task => this.IsDateEqual(task.Date) || this.IsDateEqual(task.EndDate)));
+                    new ObservableCollection<UserTaskModel>(this.taskMediator.Tasks.Where(task => this.IsDateEqual(task.Date) || this.IsDateEqual(task.EndDate)));
 
                 return new ReadOnlyObservableCollection<UserTaskModel>(result);
             }
@@ -189,7 +234,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// </returns>
         public virtual DateVm GetNext()
         {
-            return this.Factory.Create(this.NextDate, this.Factory, this.taskMediator);
+            return this.factory.Create(this.NextDate, this.factory, this.taskMediator);
         }
 
         /// <summary>
@@ -200,7 +245,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// </returns>
         public virtual DateVm GetPrevious()
         {
-            return this.Factory.Create(this.PreviousDate, this.Factory, this.taskMediator);
+            return this.factory.Create(this.PreviousDate, this.factory, this.taskMediator);
         }
 
         /// <summary>
@@ -209,6 +254,16 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         public void UpdateTasks()
         {
             this.OnPropertyChanged("UserTasks");
+
+            if (this.children == null || this.children.Count <= 0)
+            {
+                return;
+            }
+
+            foreach (DateVm child in this.children)
+            {
+                child.UpdateTasks();
+            }
         }
 
         /// <summary>
@@ -243,15 +298,14 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         protected abstract void FillChildren();
 
         /// <summary>
-        /// The method, create or get from factory the DateVm by DateInfoModel and adds it in children collection.
-        /// Also subscribes to the events of the added element, reacting to them by throwing their own equivalent events.
+        /// The register child.
         /// </summary>
         /// <param name="childDate">
         /// The child date.
         /// </param>
         protected virtual void RegisterChild(DateInfoModel childDate)
         {
-            DateVm child = this.Factory.Create(childDate, this.Factory, this.taskMediator);
+            DateVm child = this.factory.Create(childDate, this.factory, this.taskMediator);
             child.NewVmNeeded += this.OnNewVmNeeded;
             child.TaskAdded += (sender, task) =>
                 {

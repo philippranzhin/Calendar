@@ -23,6 +23,6 @@ namespace Database.DataBase.Interfaces
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        string GetDateBasePath(string filename);
+        string GetDataBasePath(string filename);
     }
 }

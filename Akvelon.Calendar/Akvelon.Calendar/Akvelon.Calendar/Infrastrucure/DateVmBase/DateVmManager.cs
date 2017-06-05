@@ -28,6 +28,11 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
     public class DateVmManager : IDateVmFactory
     {
         /// <summary>
+        /// The cache size.
+        /// </summary>
+        private const int CacheSize = 30;
+
+        /// <summary>
         ///     The date view model collection.
         /// </summary>
         private readonly List<DateVm> dateVmCollection = new List<DateVm>();
@@ -66,8 +71,13 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         {
             DateVm result = this.dateVmCollection.FirstOrDefault(dateVm => dateVm.IsDateEqual(dateInfo));
 
-            if (result != null)
+            if (this.dateVmCollection.Count > CacheSize)
             {
+                this.dateVmCollection.RemoveRange(0, this.dateVmCollection.Count - CacheSize);
+            }
+
+            if (result != null)
+            {                
                 return result;
             }
 

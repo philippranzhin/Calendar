@@ -13,6 +13,7 @@ namespace Akvelon.Calendar.ViewModels
     using System.ComponentModel;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Threading.Tasks;
 
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
     using Akvelon.Calendar.Infrastrucure.UserTasks;
@@ -26,6 +27,13 @@ namespace Akvelon.Calendar.ViewModels
     /// </summary>
     public class DateCase : IDateVm
     {
+
+        /// <summary>
+        /// The animation speed.
+        /// TODO need to get this value from the app resources
+        /// </summary>
+        private const int AnimationSpeed = 200;
+
         /// <summary>
         /// Count of views to display
         /// </summary>
@@ -40,7 +48,7 @@ namespace Akvelon.Calendar.ViewModels
         /// The selected child.
         /// </summary>
         private DateVm selectedChild;
-       
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DateCase"/> class.
         /// </summary>
@@ -167,11 +175,12 @@ namespace Akvelon.Calendar.ViewModels
         /// </param>
         protected virtual void OnTaskAdded(IUserTaskChanged sender, UserTaskModel task)
         {
-            this.TaskAdded?.Invoke(sender, task);
+           this.TaskAdded?.Invoke(sender, task);
         }
 
         /// <summary>
         /// Creates (if need) and adds to collection previous and next Date view models. Removes unused view models.
+        /// TODO need to resolve this problem without the "Device.BeginInvokeOnMainThread" dependency
         /// </summary>
         private void ProvideTransition()
         {
@@ -181,24 +190,39 @@ namespace Akvelon.Calendar.ViewModels
                 this.Children.Add(this.SelectedChild.GetNext());
             }
 
+
+            // adds the next view model after animation
             if (this.Children.Count == ViewsNumber && this.Children.Last() == this.SelectedChild)
             {
-                Device.BeginInvokeOnMainThread(
+                Task.Run(
+                    () =>
+                        {
+                            System.Threading.Thread.Sleep(AnimationSpeed);
+
+                    Device.BeginInvokeOnMainThread(
                     () =>
                         {
                             this.Children.Remove(this.Children.First());
                             this.Children.Add(this.SelectedChild.GetNext());
                         });
+                        });
             }
 
+
+            // adds the previous view model after animation
             if (this.Children.Count == ViewsNumber && this.Children.First() == this.SelectedChild)
             {
-                Device.BeginInvokeOnMainThread(
+                Task.Run(
                     () =>
                         {
-                            this.Children.Remove(this.Children.Last());
-                            this.Children.Insert(0, this.SelectedChild.GetPrevious());
-                        });
+                            System.Threading.Thread.Sleep(AnimationSpeed);
+                            Device.BeginInvokeOnMainThread(
+                                () =>
+                                    {
+                                        this.Children.Remove(this.Children.Last());
+                                        this.Children.Insert(0, this.SelectedChild.GetPrevious());
+                                    });
+                        });               
             }
         }     
     }

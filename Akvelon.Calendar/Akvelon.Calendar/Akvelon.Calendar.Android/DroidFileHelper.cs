@@ -39,7 +39,7 @@ namespace Akvelon.Calendar.Droid
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string GetDateBasePath(string filename)
+        public string GetDataBasePath(string filename)
         {
             if (this.path != null)
             {

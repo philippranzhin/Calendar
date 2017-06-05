@@ -30,12 +30,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\DateInfoModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Enums\DateRepresentationType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Interfaces\IApplicationModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AddTaskVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\TaskVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ApplicationVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DateCase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DayVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\HourVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MonthVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NavigationView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\WeekVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\YearVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\AddTaskView.xaml.cs">
@@ -49,7 +50,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\MarkupExtensions\Converters\EnumerableToItemConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\MarkupExtensions\Converters\ItemTappedEventArgsToSelectedItemConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\MarkupExtensions\TemplateSelectors\DateTemplateSelector.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Views\MarkupExtensions\TemplateSelectors\ViewTemplateSelector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\SettingsView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
