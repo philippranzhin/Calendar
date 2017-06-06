@@ -21,16 +21,16 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
     using Database.DataBase.Models;
 
     /// <summary>
-    /// Date model dispatcher. Describes objects that can manage the DateVm collection, 
-    /// provide an interface for creating DateVm, 
-    /// ensure that all DateVm in the collection must have a common link to the collection of tasks.
+    /// Date model dispatcher. Describes objects that can manage the date view model collection, 
+    /// provide an interface for creating date view model, 
+    /// ensure that all date view model in the collection must have a common link to the collection of tasks.
     /// </summary>
     public class DateVmManager : IDateVmFactory
     {
         /// <summary>
         /// The cache size.
         /// </summary>
-        private const int CacheSize = 30;
+        private const int CacheSize = 10;
 
         /// <summary>
         ///     The date view model collection.

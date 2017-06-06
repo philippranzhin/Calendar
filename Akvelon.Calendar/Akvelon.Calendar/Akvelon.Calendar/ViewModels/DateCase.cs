@@ -9,6 +9,7 @@
 
 namespace Akvelon.Calendar.ViewModels
 {
+    using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Linq;
@@ -58,7 +59,7 @@ namespace Akvelon.Calendar.ViewModels
         public DateCase(DateVm selectedChild)
         {
             this.Children = new ObservableCollection<DateVm> { selectedChild };
-            this.SelectedChild = selectedChild;
+            this.SelectedChild = selectedChild;                                                                       
         }
 
         /// <summary>
@@ -132,6 +133,11 @@ namespace Akvelon.Calendar.ViewModels
         public string Name => this.SelectedChild.Name;
 
         /// <summary>
+        /// Gets or sets a value indicating whether the collection of children can be managed.
+        /// </summary>
+        private bool Locked { get; set; } = false;
+
+        /// <summary>
         /// The update tasks.
         /// </summary>
         public void UpdateTasks()
@@ -139,6 +145,26 @@ namespace Akvelon.Calendar.ViewModels
             foreach (DateVm dateVm in this.Children)
             {
                 dateVm.UpdateTasks();
+            }
+        }
+
+
+        /// <summary>
+        /// Creates first state of date case. Is important to use this method only when the user is get a first child and set it as selected.  
+        /// Resolves the select problems with the platforms specific
+        /// </summary>
+        public void Create()
+        {
+            if (this.Children.Count == 1 && !this.Locked)
+            {
+                this.Locked = true;               
+                this.Execute(
+                    () =>
+                        {
+                            this.Children.Add(this.SelectedChild.GetNext());
+                            this.Children.Insert(0, this.SelectedChild.GetPrevious());
+                            this.Locked = false;
+                        });
             }
         }
 
@@ -183,47 +209,44 @@ namespace Akvelon.Calendar.ViewModels
         /// TODO need to resolve this problem without the "Device.BeginInvokeOnMainThread" dependency
         /// </summary>
         private void ProvideTransition()
-        {
-            if (this.Children.Count == 1)
-            {
-                this.Children.Insert(0, this.SelectedChild.GetPrevious());
-                this.Children.Add(this.SelectedChild.GetNext());
-            }
-
-
+        {            
             // adds the next view model after animation
             if (this.Children.Count == ViewsNumber && this.Children.Last() == this.SelectedChild)
             {
-                Task.Run(
-                    () =>
-                        {
-                            System.Threading.Thread.Sleep(AnimationSpeed);
-
-                    Device.BeginInvokeOnMainThread(
+                    this.Execute(
                     () =>
                         {
                             this.Children.Remove(this.Children.First());
                             this.Children.Add(this.SelectedChild.GetNext());
                         });
-                        });
             }
-
 
             // adds the previous view model after animation
             if (this.Children.Count == ViewsNumber && this.Children.First() == this.SelectedChild)
             {
-                Task.Run(
+                this.Execute(
                     () =>
                         {
-                            System.Threading.Thread.Sleep(AnimationSpeed);
-                            Device.BeginInvokeOnMainThread(
-                                () =>
-                                    {
-                                        this.Children.Remove(this.Children.Last());
-                                        this.Children.Insert(0, this.SelectedChild.GetPrevious());
-                                    });
-                        });               
+                            this.Children.Remove(this.Children.Last());
+                            this.Children.Insert(0, this.SelectedChild.GetPrevious());
+                        });
             }
-        }     
+        }
+
+        /// <summary>
+        /// Executes the  method on device thread with an "AnimationSpeed" delay
+        /// </summary>
+        /// <param name="method">
+        /// The callback.
+        /// </param>
+        private void Execute(Action method)
+        {
+            Task.Run(
+                () =>
+                    {
+                        System.Threading.Thread.Sleep(AnimationSpeed);
+                        Device.BeginInvokeOnMainThread(method);
+                    });
+        }
     }
 }

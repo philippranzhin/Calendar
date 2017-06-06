@@ -8,7 +8,8 @@
               BindingContext="{Binding  ViewModel, Source={x:Reference DatePage}}"
               ItemsSource="{Binding SelectedCase.Children}"
               SelectedItem="{Binding SelectedCase.SelectedChild, Mode=TwoWay}"             
-              Title="{Binding SelectedCase.SelectedChild.Name}"
+              Title="{Binding SelectedCase.SelectedChild.Name}"           
+              LayoutChanged="DateView_OnLayoutChanged"
               >
     <!--TODO this file is not ended-->
     <TabbedPage.Resources>
