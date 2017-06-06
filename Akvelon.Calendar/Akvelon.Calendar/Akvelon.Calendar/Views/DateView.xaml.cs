@@ -9,6 +9,8 @@
 
 namespace Akvelon.Calendar.Views
 {
+    using System;
+
     using Akvelon.Calendar.ViewModels;
 
     using Xamarin.Forms;
@@ -41,5 +43,19 @@ namespace Akvelon.Calendar.Views
         /// Gets the view model.
         /// </summary>
         public ApplicationVm ViewModel => this.BindingContext as ApplicationVm;
+
+        /// <summary>
+        /// The date view_ on layout changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void DateView_OnLayoutChanged(object sender, EventArgs e)
+        {
+            this.ViewModel.SelectedCase.Create();
+        }
     }
 }

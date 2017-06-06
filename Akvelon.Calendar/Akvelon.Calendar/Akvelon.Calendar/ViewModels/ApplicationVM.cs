@@ -33,12 +33,12 @@ namespace Akvelon.Calendar.ViewModels
         /// The children.
         /// This property is not needed now, but later it should be an important part of the navigation
         /// </summary>
-        private ObservableCollection<IDateVm> cases;
+        private ObservableCollection<DateCase> cases;
 
         /// <summary>
         /// The current child.
         /// </summary>
-        private IDateVm selectedCase;
+        private DateCase selectedCase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationVm"/> class.
@@ -63,7 +63,7 @@ namespace Akvelon.Calendar.ViewModels
         /// <summary>
         /// Gets or sets the children.
         /// </summary>
-        public ObservableCollection<IDateVm> Cases
+        public ObservableCollection<DateCase> Cases
         {
             get
             {
@@ -80,7 +80,7 @@ namespace Akvelon.Calendar.ViewModels
         /// <summary>
         /// Gets or sets the selected child.
         /// </summary>
-        public IDateVm SelectedCase
+        public DateCase SelectedCase
         {
             get
             {

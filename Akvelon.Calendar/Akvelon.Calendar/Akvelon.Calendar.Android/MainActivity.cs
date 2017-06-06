@@ -45,7 +45,7 @@ namespace Akvelon.Calendar.Droid
 
             Forms.Init(this, bundle);
 
-            this.LoadApplication(AppInjection.GetInstance("CalendarX", DateRepresentationType.Day));
+            this.LoadApplication(AppInjection.GetInstance("CalendarX", DateRepresentationType.Year));
         }
     }
 }
