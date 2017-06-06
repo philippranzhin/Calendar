@@ -18,7 +18,7 @@ namespace Akvelon.Calendar.Views
     /// The date view.
     /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class DateView : CarouselPage
+    public partial class DateView : TabbedPage
     {
 
         /// <summary>
@@ -27,6 +27,14 @@ namespace Akvelon.Calendar.Views
         public DateView()
         {
             this.InitializeComponent();
+            this.PropertyChanged += async (sender, args) =>
+                {
+                    if (args.PropertyName == "ItemsSource")
+                    {
+                        this.CurrentPage.Opacity = .1;
+                        await this.CurrentPage.FadeTo(1, 260);
+                    }              
+                };    
         }
 
         /// <summary>

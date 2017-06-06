@@ -48,7 +48,7 @@ namespace Akvelon.Calendar.ViewModels
         /// </param>
         public ApplicationVm(IApplicationModel model)
         {
-            this.Model = model; 
+            this.Model = model;
             DateInfoModel currentDate = new DateInfoModel(DateTime.Now, this.Model.StartDateType);
 
             this.SelectedCase = new DateCase(this.Model.Factory.Create(currentDate, this.Model.Factory, this.Model.TaskMediator));
@@ -97,9 +97,9 @@ namespace Akvelon.Calendar.ViewModels
 
                 value.NewVmNeeded += this.OnNewVm;
                 this.Model.TaskMediator.AddClient(value);
-
+             
                 this.selectedCase = value;
-                this.OnPropertyChanged();          
+                this.OnPropertyChanged();
             }
         }
 
@@ -166,7 +166,7 @@ namespace Akvelon.Calendar.ViewModels
         /// </param>
         public void OnNewVm(IDateVm viewModel)
         {
-                this.SelectedCase = new DateCase((DateVm)viewModel);
+            this.SelectedCase = new DateCase((DateVm)viewModel);
         }
     }
 }

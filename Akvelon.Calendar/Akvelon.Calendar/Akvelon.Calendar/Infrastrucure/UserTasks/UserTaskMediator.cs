@@ -9,12 +9,18 @@
 
 namespace Akvelon.Calendar.Infrastrucure.UserTasks
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Linq;
 
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
 
+    using Android.OS;
+
     using Database.DataBase.Models;
+
+    using Java.IO;
 
     /// <summary>
     /// The user task mediator. Is a mediator between UserTaskManager and the collection of IUserTaskChanged.
@@ -122,7 +128,7 @@ namespace Akvelon.Calendar.Infrastrucure.UserTasks
                 this.userTaskManager.Tasks.Add(task);
             }
 
-            sender.UpdateTasks();           
+            this.taskClients.ToList().ForEach(client => client.UpdateTasks());
         }
 
         /// <summary>

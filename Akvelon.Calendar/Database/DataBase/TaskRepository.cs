@@ -39,7 +39,7 @@ namespace Database.DataBase
         /// </param>
         public TaskRepository(IFileHelper fileHelper, string fileName)
         {
-            this.database = new SQLiteConnection(fileHelper.GetDateBasePath(fileName));
+            this.database = new SQLiteConnection(fileHelper.GetDataBasePath(fileName));
 
             this.database.CreateTable<UserTaskModel>();
         }

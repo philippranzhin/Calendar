@@ -1,12 +1,15 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AddTaskVm.cs" company="Akvelon">
+// <copyright file="TaskVm.cs" company="Akvelon">
 //   Philipp Ranzhin
 // </copyright>
 // <summary>
-//   Defines the AddTaskVm type.
+//   Defines the TaskVm type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+
+// TODO need to resolve problem with an observe ability of the DateInfoModel 
+// (if it will be observable, I can to remove the input properies (such as InputName, InputDate etc.), but I not sure, that this is a correct way)
 namespace Akvelon.Calendar.ViewModels
 {
     using System;
@@ -14,6 +17,7 @@ namespace Akvelon.Calendar.ViewModels
     using Akvelon.Calendar.Infrastrucure.DateVmBase;
     using Akvelon.Calendar.Infrastrucure.UserTasks;
     using Akvelon.Calendar.Models;
+    using Akvelon.Calendar.Models.Enums;
 
     using Database.DataBase.Models;
 
@@ -22,7 +26,7 @@ namespace Akvelon.Calendar.ViewModels
     /// <summary>
     /// The add task view model.
     /// </summary>
-    public class AddTaskVm : MvvmBase, IDateVm
+    public class TaskVm : MvvmBase, IDateVm
     {
         /// <summary>
         /// The task mediator.
@@ -43,55 +47,51 @@ namespace Akvelon.Calendar.ViewModels
         /// The old task.
         /// </summary>
         private UserTaskModel oldTask;
-
+ 
         /// <summary>
-        /// The old task.
+        /// The new task.
         /// </summary>
         private UserTaskModel newTask;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddTaskVm"/> class.
+        /// Initializes a new instance of the <see cref="TaskVm"/> class.
         /// </summary>
         /// <param name="mediator">
         /// The mediator.
         /// </param>
         /// <param name="factory">
         /// The factory.
+        /// </param>
+        /// <param name="dateInfo">
+        /// The date info.
         /// </param>
         /// <param name="task">
         /// The task.
         /// </param>
-        /// <param name="dateInfo">
-        /// The date info.
-        /// </param>
-        public AddTaskVm(IUserTaskMediator mediator, IDateVmFactory factory, UserTaskModel task, DateInfoModel dateInfo)
+        public TaskVm(IUserTaskMediator mediator, IDateVmFactory factory, DateInfoModel dateInfo, UserTaskModel task = null)
         {
-            this.OldTask = task;
+
+            // sync the save possibility
+            this.PropertyChanged += (sender, args) =>
+                {
+                    if (args.PropertyName != "CanSave" && args.PropertyName != "NewTask")
+                    {
+                        this.OnPropertyChanged("CanSave");
+                    }
+                };
+
+            this.OldTask = task ?? new UserTaskModel()
+                                       {
+                                           Date = DateTime.Now,
+                                           EndDate = DateTime.Now
+                                       };
+
             this.taskMediator = mediator;
             this.factory = factory;
             this.dateInfo = dateInfo;
+            this.NewTask = (UserTaskModel)this.OldTask.Clone();
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AddTaskVm"/> class.
-        /// </summary>
-        /// <param name="mediator">
-        /// The mediator.
-        /// </param>
-        /// <param name="factory">
-        /// The factory.
-        /// </param>
-        /// <param name="dateInfo">
-        /// The date info.
-        /// </param>
-        public AddTaskVm(IUserTaskMediator mediator, IDateVmFactory factory, DateInfoModel dateInfo)
-        {
-            this.OldTask = new UserTaskModel() { Date = dateInfo.Date, EndDate = dateInfo.Date};
-            this.taskMediator = mediator;
-            this.factory = factory;
-            
-            this.dateInfo = dateInfo;
-        }
 
         /// <summary>
         /// The task added.
@@ -116,15 +116,20 @@ namespace Akvelon.Calendar.ViewModels
         /// <summary>
         /// Gets a value indicating whether is can save.
         /// </summary>
-        public bool IsCanSave
+        public bool CanSave
         {
             get
             {
-                if (this.OldTask.CompareTo(this.newTask) != 0 &&
-                    !string.IsNullOrWhiteSpace(this.newTask.Name))
+                if (
+                    this.NewTask != null &&
+                    this.OldTask.CompareTo(this.newTask) != 0 &&
+                    !string.IsNullOrWhiteSpace(this.newTask.Name) &&
+                    !string.IsNullOrWhiteSpace(this.newTask.Description) &&
+                    !string.IsNullOrWhiteSpace(this.newTask.Place))
                 {
                     return true;
                 }
+
                 return false;
             }
         }
@@ -140,9 +145,9 @@ namespace Akvelon.Calendar.ViewModels
                     () =>
                         {
                             this.OnTaskRemoved(this, this.OldTask);
-                            this.OnTaskAdded(this, this.NewTask);                            
+                            this.OnTaskAdded(this, this.NewTask);
                         },
-                    () => this.IsCanSave);
+                    () => this.CanSave);
             }
         }
 
@@ -154,7 +159,7 @@ namespace Akvelon.Calendar.ViewModels
             get
             {
                 return this.NewTask.Name;
-                
+
             }
 
             set
@@ -246,7 +251,6 @@ namespace Akvelon.Calendar.ViewModels
             {
                 this.oldTask = value;
                 this.OnPropertyChanged();
-                this.NewTask = (UserTaskModel)this.OldTask.Clone();
             }
         }
 
@@ -276,24 +280,21 @@ namespace Akvelon.Calendar.ViewModels
             {
                 this.NewVmNeeded?.Invoke(
                     this.factory.Create(
-                    new DateInfoModel(this.newTask.Date, this.dateInfo.DateType),
-                    this.factory,
-                    this.taskMediator));
+                        new DateInfoModel(this.newTask.Date, this.dateInfo.DateType),
+                        this.factory,
+                        this.taskMediator));
             }
         }
 
         /// <summary>
-        /// The on new wm needed.
+        /// The on new view model needed.
         /// </summary>
-        /// <param name="sender">
-        /// The sender.
+        /// <param name="viewModel">
+        /// The view model.
         /// </param>
-        /// <param name="newDateVm">
-        /// The new date vm.
-        /// </param>
-        protected virtual void OnNewWmNeeded(IDateVm sender)
+        protected virtual void OnNewVmNeeded(IDateVm viewModel)
         {
-            this.NewVmNeeded?.Invoke(sender);
+            this.NewVmNeeded?.Invoke(viewModel);
         }
 
 

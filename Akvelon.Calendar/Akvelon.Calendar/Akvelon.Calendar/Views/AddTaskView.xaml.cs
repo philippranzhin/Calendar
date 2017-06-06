@@ -18,7 +18,7 @@ namespace Akvelon.Calendar.Views
     /// The add task view.
     /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class AddTaskView : ContentPage
+    public partial class AddTaskView : ContentView
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AddTaskView"/> class.
@@ -26,12 +26,9 @@ namespace Akvelon.Calendar.Views
         public AddTaskView()
         {
             this.InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
         }
 
-        /// <summary>
-        /// The view model.
-        /// </summary>
-        public AddTaskVm ViewModel => (AddTaskVm)this.BindingContext;
     }
 
 }
