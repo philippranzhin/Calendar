@@ -158,6 +158,10 @@
       <Project>{96a7e717-b582-4d55-80a2-761823e929d8}</Project>
       <Name>Database</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ResourceService\ResourceService.csproj">
+      <Project>{99683151-3cb6-4a8e-91f5-6af78a34bf83}</Project>
+      <Name>ResourceService</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\Akvelon.Calendar\Akvelon.Calendar.projitems" Label="Shared" Condition="Exists('..\Akvelon.Calendar\Akvelon.Calendar.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
