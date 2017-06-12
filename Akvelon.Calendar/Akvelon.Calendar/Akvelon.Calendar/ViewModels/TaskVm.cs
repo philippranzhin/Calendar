@@ -26,7 +26,7 @@ namespace Akvelon.Calendar.ViewModels
     /// <summary>
     /// The add task view model.
     /// </summary>
-    public class TaskVm : MvvmBase, IDateVm
+    public class TaskVm : TaskVmBase
     {
         /// <summary>
         /// The task mediator.
@@ -111,7 +111,7 @@ namespace Akvelon.Calendar.ViewModels
         /// <summary>
         /// The name.
         /// </summary>
-        public string Name => this.newTask.Name;
+        public override string Name => this.newTask.Name;
 
         /// <summary>
         /// Gets a value indicating whether is can save.
@@ -159,7 +159,6 @@ namespace Akvelon.Calendar.ViewModels
             get
             {
                 return this.NewTask.Name;
-
             }
 
             set
@@ -269,61 +268,6 @@ namespace Akvelon.Calendar.ViewModels
                 this.newTask = value;
                 this.OnPropertyChanged();
             }
-        }
-
-        /// <summary>
-        /// The update tasks.
-        /// </summary>
-        public void UpdateTasks()
-        {
-            if (this.taskMediator.Tasks.Contains(this.NewTask))
-            {
-                this.NewVmNeeded?.Invoke(
-                    this.factory.Create(
-                        new DateInfoModel(this.newTask.Date, this.dateInfo.DateType),
-                        this.factory,
-                        this.taskMediator));
-            }
-        }
-
-        /// <summary>
-        /// The on new view model needed.
-        /// </summary>
-        /// <param name="viewModel">
-        /// The view model.
-        /// </param>
-        protected virtual void OnNewVmNeeded(IDateVm viewModel)
-        {
-            this.NewVmNeeded?.Invoke(viewModel);
-        }
-
-
-        /// <summary>
-        /// The on task added.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="task">
-        /// The task.
-        /// </param>
-        protected virtual void OnTaskAdded(IUserTaskChanged sender, UserTaskModel task)
-        {
-            this.TaskAdded?.Invoke(sender, task);
-        }
-
-        /// <summary>
-        /// The on task removed.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="task">
-        /// The task.
-        /// </param>
-        protected virtual void OnTaskRemoved(IUserTaskChanged sender, UserTaskModel task)
-        {
-            this.TaskRemoved?.Invoke(sender, task);
-        }
+        }            
     }
 }

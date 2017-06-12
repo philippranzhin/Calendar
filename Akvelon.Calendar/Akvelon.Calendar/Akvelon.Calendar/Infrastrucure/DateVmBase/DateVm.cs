@@ -50,6 +50,11 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         private IDateVm taskVm;
 
         /// <summary>
+        /// The task watching.
+        /// </summary>
+        private UserTaskModel taskWatching;
+
+        /// <summary>
         ///     The children.
         /// </summary>
         private ObservableCollection<DateVm> children;
@@ -101,27 +106,58 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         ///  Gets the add task command.
         ///  Parameter must be of type "DateTime"
         /// </summary>
-        public Command CancelTaskCommand
-        {
-            get
-            {
-                return new Command(() => this.TaskVm = null);
-            }
-        }
-
-        /// <summary>
-        ///  Gets the add task command.
-        ///  Parameter must be of type "DateTime"
-        /// </summary>
         public Command AddTaskCommand
         {
             get
             {
-                return new Command((date) => this.TaskVm = new TaskVm(this.taskMediator, this.factory, this.DateInfo)
-                                                               {
-                                                                   InputDate = (DateTime)date,
-                                                                   InputEndDate = (DateTime)date
-                });
+                return new Command(
+                    (data) =>
+                        {
+                            if (data is DateTime)
+                            {
+                                this.TaskVm =
+                                    new TaskVm(this.taskMediator, this.factory, this.DateInfo)
+                                        {
+                                            InputDate =
+                                                (DateTime)data,
+                                            InputEndDate =
+                                                (DateTime)data
+                                        };
+                            }
+                            else if (data is UserTaskModel)
+                            {
+                                this.TaskVm = new TaskVm(this.taskMediator, this.factory, this.dateInfo, (UserTaskModel)data);
+                            }
+                            else
+                            {
+                                this.TaskVm = null;
+                            }
+                        });
+            }
+        }
+
+        /// <summary>
+        /// Gets the task view command, which takes UserTaskModel parameter.
+        /// </summary>
+        public Command TaskViewCommand
+        {
+            get
+            {        
+                return new Command((param) => this.TaskWatching = param as UserTaskModel);
+            }
+        }
+
+
+
+        /// <summary>
+        /// Gets the remove task command.
+        /// </summary>
+        public Command RemoveTaskCommand
+        {
+            get
+            {
+                return new Command(
+                    (task) => this.OnTaskRemoved(this, (UserTaskModel)task));
             }
         }
 
@@ -146,17 +182,33 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
                             this.OnTaskAdded(this, task);
                             this.TaskVm = null;
                         };
+                    this.taskVm.TaskRemoved += (sender, task) =>
+                        {
+                            this.OnTaskRemoved(this, task);
+                            this.TaskVm = null;
+                        };
                 }
 
                 this.OnPropertyChanged();
-                this.OnPropertyChanged("IsTaskAdding");
             }
         }
 
         /// <summary>
-        /// The is task adding.
+        /// Gets or sets the task watching.
         /// </summary>
-        public bool IsTaskAdding => this.TaskVm != null;
+        public UserTaskModel TaskWatching
+        {
+            get
+            {
+                return this.taskWatching;
+            }
+
+            set
+            {
+                this.taskWatching = value;
+                this.OnPropertyChanged();
+            }
+        }
 
         /// <summary>
         ///     The date info.
@@ -329,6 +381,7 @@ namespace Akvelon.Calendar.Infrastrucure.DateVmBase
         /// </param>
         protected virtual void OnNewVmNeeded(IDateVm viewModel)
         {
+            this.TaskVm = null;
             this.NewVmNeeded?.Invoke(viewModel);
         }
 

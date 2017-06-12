@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)AppStart\AppInjection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateVmBase\DateVmManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateVmBase\IDateVmFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\DateVmBase\TaskVmBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\Extensions\DateTimeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\UserTasks\ITaskManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastrucure\UserTasks\IUserTaskChanged.cs" />
@@ -49,7 +50,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\MarkupExtensions\Behaviors\EventToCommandBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\MarkupExtensions\Converters\EnumerableToItemConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\MarkupExtensions\Converters\ItemTappedEventArgsToSelectedItemConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\MarkupExtensions\Converters\DateVmToBoolConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\MarkupExtensions\Converters\ObjectToBoolConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\MarkupExtensions\TemplateSelectors\DateTemplateSelector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\MarkupExtensions\TriggerActions\FadeTriggerAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\SettingsView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

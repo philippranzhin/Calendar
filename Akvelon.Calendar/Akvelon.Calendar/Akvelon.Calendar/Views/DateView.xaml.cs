@@ -22,7 +22,6 @@ namespace Akvelon.Calendar.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DateView : TabbedPage
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="DateView"/> class.
         /// </summary>
@@ -35,7 +34,7 @@ namespace Akvelon.Calendar.Views
                     {
                         this.CurrentPage.Opacity = .1;
                         await this.CurrentPage.FadeTo(1, 260);
-                    }              
+                    }                 
                 };    
         }
 

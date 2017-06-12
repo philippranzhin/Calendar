@@ -115,10 +115,12 @@ namespace Akvelon.Calendar.ViewModels
                 {
                     this.selectedChild.NewVmNeeded -= this.OnNewVmNeeded;
                     this.selectedChild.TaskAdded -= this.OnTaskAdded;
+                    this.selectedChild.TaskRemoved -= this.OnTaskRemoved;
                 }
 
                 value.NewVmNeeded += this.OnNewVmNeeded;
-                value.TaskAdded += this.TaskAdded;
+                value.TaskAdded += this.OnTaskAdded;
+                value.TaskRemoved += this.OnTaskRemoved;
 
                 this.selectedChild = value;
                 this.OnPropertyChanged();             
@@ -202,6 +204,20 @@ namespace Akvelon.Calendar.ViewModels
         protected virtual void OnTaskAdded(IUserTaskChanged sender, UserTaskModel task)
         {
            this.TaskAdded?.Invoke(sender, task);
+        }
+
+        /// <summary>
+        /// The on task removed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="task">
+        /// The task.
+        /// </param>
+        protected virtual void OnTaskRemoved(IUserTaskChanged sender, UserTaskModel task)
+        {
+            this.TaskRemoved?.Invoke(sender, task);
         }
 
         /// <summary>

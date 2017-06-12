@@ -2,6 +2,7 @@
 
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:triggerActions="clr-namespace:Akvelon.Calendar.Views.MarkupExtensions.TriggerActions"
              x:Class="Akvelon.Calendar.App"
              x:Name="Application"
            >
@@ -16,7 +17,23 @@
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
-            
+            <Style x:Key="SubListStyle" TargetType="View">
+                <Style.Triggers>
+                    <Trigger TargetType="View" Property="IsEnabled" Value="True">
+                        <Trigger.EnterActions>
+                            <triggerActions:FadeTriggerAction From="0" To="1" Length="300"/>
+                        </Trigger.EnterActions>
+                    </Trigger>
+                    <Trigger TargetType="View" Property="IsEnabled" Value="False">
+                        <Trigger.EnterActions>
+                            <triggerActions:FadeTriggerAction From="1" To="0" Length="300"/>
+                        </Trigger.EnterActions>
+                    </Trigger>
+                    <Trigger TargetType="View" Property="Opacity" Value="0">
+                        <Setter Property="IsVisible" Value="False"></Setter>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
         
     </Application.Resources>

@@ -113,16 +113,26 @@ namespace Database.DataBase.Models
                 throw new ArgumentException("This method can to compare the UserTaskModel only");
             }
 
+            int dateCompareResult = this.Date.CompareTo(compModel.Date);
+
             if (this.Date == compModel.Date &&
                 this.Name == compModel.Name &&
                 this.Description == compModel.Description &&
                 this.Place == compModel.Place &&
-                this.EndDate == compModel.EndDate)
+                this.EndDate == compModel.EndDate &&
+                dateCompareResult == 0)
             {
                 return 0;
             }
 
-            return this.Date.CompareTo(compModel.Date);
+            if (dateCompareResult != 0)
+            {
+                return dateCompareResult;
+            }
+
+
+            // if the dates of comparing objects is equal, there is no reason to decide, whish of them is greater
+            return 1;
         }
     }
 }
