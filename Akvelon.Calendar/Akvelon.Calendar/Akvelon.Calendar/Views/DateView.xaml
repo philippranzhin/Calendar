@@ -1,0 +1,260 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:templateSelectors="clr-namespace:Akvelon.Calendar.Views.MarkupExtensions.TemplateSelectors;assembly=Akvelon.Calendar.Android"
+             xmlns:views="clr-namespace:Akvelon.Calendar.Views;assembly=Akvelon.Calendar.Android"
+             x:Class="Akvelon.Calendar.Views.DateView"
+              x:Name="DatePage"
+              BindingContext="{Binding  ViewModel, Source={x:Reference DatePage}}"
+              ItemsSource="{Binding SelectedCase.Children}"
+              SelectedItem="{Binding SelectedCase.SelectedChild, Mode=TwoWay}"             
+              Title="{Binding SelectedCase.SelectedChild.Name}"           
+              LayoutChanged="DateView_OnLayoutChanged"
+              >
+    <!--TODO this file is not ended-->
+    <TabbedPage.Resources>
+        <ResourceDictionary>
+            
+            <DataTemplate x:Key="YearTemplate">
+                <ContentPage Title="{Binding Name}">
+                    <Grid>
+                        <ListView ItemsSource="{Binding Children}">
+                            <ListView.Header>
+                                <StackLayout  Orientation="Horizontal" HorizontalOptions="Center">
+                                    <Label Text="{Binding Name}" 
+                                           Style="{StaticResource DateHeaderStyle}">
+                                    </Label>
+                                    <Label Text="{Binding UserTasks.Count, StringFormat='tasks = {0}'}"></Label>
+                                </StackLayout>
+                            </ListView.Header>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Button Text="->"                                                    
+                                                    Command="{Binding NextViewCommand}" 
+                                                    HorizontalOptions="Start"
+                                                    VerticalOptions="Center"
+                                                  >
+                                            </Button>
+                                            <Label HorizontalOptions="FillAndExpand"
+                                                   Text="{Binding Name}"
+                                                   Style="{StaticResource DateHeaderStyle}"></Label>
+                                            <Button Text="{Binding UserTasks.Count}"
+                                                    Command="{Binding  ViewModel.SelectedCase.SelectedChild.AddTaskCommand, Source={x:Reference DatePage}}"
+                                                    CommandParameter="{Binding DateInfo.Date}"
+                                                    HorizontalOptions="End"
+                                                    VerticalOptions="Center">
+                                            </Button>
+                                        </StackLayout>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <ScrollView
+                                            IsVisible="{Binding IsTaskAdding}"
+                                            Orientation="Vertical"
+                                            BackgroundColor="White" 
+                                            HorizontalOptions="FillAndExpand"
+                                            VerticalOptions="FillAndExpand">
+                            <StackLayout>
+                                <Button 
+                                        VerticalOptions="Start"
+                                        HorizontalOptions="Start"
+                                        Text="Cancel"
+                                        Command="{Binding CancelTaskCommand}"
+                                    ></Button>
+                                <views:AddTaskView 
+                                    BindingContext="{Binding TaskVm}"  
+                                    HorizontalOptions="FillAndExpand" 
+                                    VerticalOptions="FillAndExpand">
+                                </views:AddTaskView>
+                            </StackLayout>
+                        </ScrollView>
+                    </Grid>
+                </ContentPage>
+            </DataTemplate>
+            
+            <DataTemplate x:Key="MonthTemplate">
+                <ContentPage Title="{Binding Name}">
+                    <Grid>
+                        <ListView ItemsSource="{Binding Children}">
+                            <ListView.Header>
+                                <StackLayout  Orientation="Horizontal" HorizontalOptions="Center">
+                                    <Label Text="{Binding Name}" 
+                                           Style="{StaticResource DateHeaderStyle}">
+                                    </Label>
+                                    <Label Text="{Binding UserTasks.Count, StringFormat='tasks = {0}'}"></Label>
+                                </StackLayout>
+                            </ListView.Header>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Button Text="->"                                                    
+                                                    Command="{Binding NextViewCommand}" 
+                                                    HorizontalOptions="Start"
+                                                    VerticalOptions="Center"
+                                            >
+                                            </Button>
+                                            <Label HorizontalOptions="FillAndExpand"
+                                                   Text="{Binding Name}"
+                                                   Style="{StaticResource DateHeaderStyle}"></Label>
+                                            <Button Text="{Binding UserTasks.Count}"
+                                                    Command="{Binding  ViewModel.SelectedCase.SelectedChild.AddTaskCommand, Source={x:Reference DatePage}}"
+                                                    CommandParameter="{Binding DateInfo.Date}"
+                                                    HorizontalOptions="End"
+                                                    VerticalOptions="Center">
+                                            </Button>
+                                        </StackLayout>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <ScrollView
+                            IsVisible="{Binding IsTaskAdding}"
+                            Orientation="Vertical"
+                            BackgroundColor="White" 
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand">
+                            <StackLayout>
+                                <Button 
+                                    VerticalOptions="Start"
+                                    HorizontalOptions="Start"
+                                    Text="Cancel"
+                                    Command="{Binding CancelTaskCommand}"
+                                ></Button>
+                                <views:AddTaskView 
+                                    BindingContext="{Binding TaskVm}"  
+                                    HorizontalOptions="FillAndExpand" 
+                                    VerticalOptions="FillAndExpand">
+                                </views:AddTaskView>
+                            </StackLayout>
+                        </ScrollView>
+                    </Grid>
+                </ContentPage>
+            </DataTemplate>
+            
+            <DataTemplate x:Key="WeekTemplate">
+                <ContentPage Title="{Binding Name}">
+                    <Grid>
+                        <ListView ItemsSource="{Binding Children}">
+                            <ListView.Header>
+                                <StackLayout  Orientation="Horizontal" HorizontalOptions="Center">
+                                    <Label Text="{Binding Name}" 
+                                           Style="{StaticResource DateHeaderStyle}">
+                                    </Label>
+                                    <Label Text="{Binding UserTasks.Count, StringFormat='tasks = {0}'}"></Label>
+                                </StackLayout>
+                            </ListView.Header>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Button Text="->"                                                    
+                                                    Command="{Binding NextViewCommand}" 
+                                                    HorizontalOptions="Start"
+                                                    VerticalOptions="Center"
+                                            >
+                                            </Button>
+                                            <Label HorizontalOptions="FillAndExpand"
+                                                   Text="{Binding Name}"
+                                                   Style="{StaticResource DateHeaderStyle}"></Label>
+                                            <Button Text="{Binding UserTasks.Count}"
+                                                    Command="{Binding  ViewModel.SelectedCase.SelectedChild.AddTaskCommand, Source={x:Reference DatePage}}"
+                                                    CommandParameter="{Binding DateInfo.Date}"
+                                                    HorizontalOptions="End"
+                                                    VerticalOptions="Center">
+                                            </Button>
+                                        </StackLayout>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <ScrollView
+                            IsVisible="{Binding IsTaskAdding}"
+                            Orientation="Vertical"
+                            BackgroundColor="White" 
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand">
+                            <StackLayout>
+                                <Button 
+                                    VerticalOptions="Start"
+                                    HorizontalOptions="Start"
+                                    Text="Cancel"
+                                    Command="{Binding CancelTaskCommand}"
+                                ></Button>
+                                <views:AddTaskView 
+                                    BindingContext="{Binding TaskVm}"  
+                                    HorizontalOptions="FillAndExpand" 
+                                    VerticalOptions="FillAndExpand">
+                                </views:AddTaskView>
+                            </StackLayout>
+                        </ScrollView>
+                    </Grid>
+                </ContentPage>
+            </DataTemplate>
+            
+            <DataTemplate x:Key="DayTemplate">
+                <ContentPage Title="{Binding Name}">
+                    <Grid>
+                        <ListView ItemsSource="{Binding Children}">
+                            <ListView.Header>
+                                <StackLayout  Orientation="Horizontal" HorizontalOptions="Center">
+                                    <Label Text="{Binding Name}" 
+                                           Style="{StaticResource DateHeaderStyle}">
+                                    </Label>
+                                    <Label Text="{Binding UserTasks.Count, StringFormat='tasks = {0}'}"></Label>
+                                </StackLayout>
+                            </ListView.Header>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label HorizontalOptions="FillAndExpand"
+                                                   Text="{Binding Name}"
+                                                   Style="{StaticResource DateHeaderStyle}"></Label>
+                                            <Button Text="{Binding UserTasks.Count}"
+                                                    Command="{Binding  ViewModel.SelectedCase.SelectedChild.AddTaskCommand, Source={x:Reference DatePage}}"
+                                                    CommandParameter="{Binding DateInfo.Date}"
+                                                    HorizontalOptions="End"
+                                                    VerticalOptions="Center">
+                                            </Button>
+                                        </StackLayout>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <ScrollView
+                            IsVisible="{Binding IsTaskAdding}"
+                            Orientation="Vertical"
+                            BackgroundColor="White" 
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="FillAndExpand">
+                            <StackLayout>
+                                <Button 
+                                    VerticalOptions="Start"
+                                    HorizontalOptions="Start"
+                                    Text="Cancel"
+                                    Command="{Binding CancelTaskCommand}"
+                                ></Button>
+                                <views:AddTaskView 
+                                    BindingContext="{Binding TaskVm}"  
+                                    HorizontalOptions="FillAndExpand" 
+                                    VerticalOptions="FillAndExpand">
+                                </views:AddTaskView>
+                            </StackLayout>
+                        </ScrollView>
+                    </Grid>
+                </ContentPage>
+            </DataTemplate>
+        </ResourceDictionary>
+    </TabbedPage.Resources>
+    <TabbedPage.ItemTemplate>
+        <templateSelectors:DateTemplateSelector x:Key="dateTemplateSelector"
+                                                        YearTemplate="{StaticResource YearTemplate}"
+                                                        MonthTemplate="{StaticResource MonthTemplate}"
+                                                        WeekTemplate="{StaticResource WeekTemplate}"
+                                                        DayTemplate="{StaticResource DayTemplate}" />
+    </TabbedPage.ItemTemplate>
+</TabbedPage>

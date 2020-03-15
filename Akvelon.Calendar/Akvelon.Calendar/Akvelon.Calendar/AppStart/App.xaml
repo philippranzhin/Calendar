@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Akvelon.Calendar.App"
+             x:Name="Application"
+           >
+    <!--TODO make this-->
+    <Application.Resources>
+        <ResourceDictionary>
+            <!--todo-->
+            <Style x:Key="DateHeaderStyle" TargetType="Label">
+                <Style.Triggers>
+                    <DataTrigger TargetType="Label"  Binding="{Binding IsCurrentDate}" Value="true">
+                        <Setter Property="TextColor" Value="Accent"></Setter>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            
+        </ResourceDictionary>
+        
+    </Application.Resources>
+</Application>
